@@ -9,16 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEfCore();
 
 // Host
+builder.Services.AddRazorPages();
 builder.Services.AddHandlers();
 builder.Services.AddBehaviors();
-builder.Services.AddSwaggerGen( options =>
-{
-    options.CustomSchemaIds(x => x.FullName?.Replace("+", ".", StringComparison.Ordinal));
-});
+// builder.Services.AddSwaggerGen( options =>
+// {
+//     options.CustomSchemaIds(x => x.FullName?.Replace("+", ".", StringComparison.Ordinal));
+// });
 
 builder.Services.AddMediatR(configure => configure.RegisterServicesFromAssemblyContaining<Program>());
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen();
 
 builder.Services.AddExceptionHandler<ExceptionHandler.KnownExceptionsHandler>();
 
@@ -28,12 +29,21 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    // app.UseSwagger();
+    // app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.MapRazorPages();
 
 app.UseProductionExceptionHandler();
 
-app.RegisterEndpoints(appAssembly);
+// No endpoints for now
+//app.RegisterEndpoints(appAssembly);
+
+
 
 app.Run();
