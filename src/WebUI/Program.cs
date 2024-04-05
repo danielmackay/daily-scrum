@@ -1,4 +1,3 @@
-using DailyScrum.Blazor.Components;
 using WebUI.Components;
 
 var builder = WebApplication.CreateBuilder(args);
