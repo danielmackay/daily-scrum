@@ -2,13 +2,18 @@
 
 public class DailyScrumModel
 {
-    public int DaysUntilNextBooking { get; init; }
-    public int InboxCount { get; init; }
-    public required string TrelloBoardUrl { get; init; }
+    public required SummaryModel Summary { get; init; }
     public List<ProjectModel> YesterdaysProjects { get; init; } = new();
     public List<TaskModel> YesterdaysTasks { get; init; } = new();
     public List<ProjectModel> TodaysProjects { get; init; } = new();
     public List<TaskModel> TodaysTasks { get; init; } = new();
+}
+
+public class SummaryModel
+{
+    public int DaysUntilNextBooking { get; init; }
+    public int InboxCount { get; init; }
+    public required string TrelloBoardUrl { get; init; }
 }
 
 public class TaskModel

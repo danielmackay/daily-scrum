@@ -12,52 +12,15 @@ Let's make the daily scrum great again.
 
     <Heading Text="Hi SSWBenchMasters," />
 
-    <ul>
-        <li>I have @dailyScrum.DaysUntilNextBooking days until my next client booking.</li>
-        <li>I have @dailyScrum.InboxCount emails in my inbox</li>
-        <li>My Trello board is at <a href="@dailyScrum.TrelloBoardUrl">Daniel Mackay - SSW Backlog | Trello</a></li>
-        <li>I have joined my Daily Scrum meeting ✅</li>
-    </ul>
+    <Summary Model="dailyScrum.Summary" />
 
     <Heading Text="Yesterday I worked on:" />
 
-    <ul>
-        @foreach (var project in dailyScrum.YesterdaysProjects)
-        {
-            <li>@project.Name</li>
-            <ul>
-                @foreach (var task in project.Tasks)
-                {
-                    <li>@task.Name</li>
-                }
-            </ul>
-        }
-
-        @foreach (var task in dailyScrum.YesterdaysTasks)
-        {
-            <li>@task.Name</li>
-        }
-    </ul>
+    <TaskList Projects="dailyScrum.YesterdaysProjects" Tasks="dailyScrum.YesterdaysTasks" />
 
     <Heading Text="Today I'm working on:" />
 
-    <ul>
-        @foreach (var project in dailyScrum.TodaysProjects)
-        {
-        <li>@project.Name</li>
-        <ul>
-            @foreach (var task in project.Tasks)
-            {
-            <li>@task.Name</li>
-            }
-        </ul>
-        }
-
-        @foreach (var task in dailyScrum.TodaysTasks)
-        {
-        <li>@task.Name</li>
-        }
-    </ul>
+    <TaskList Projects="dailyScrum.TodaysProjects" Tasks="dailyScrum.TodaysTasks" />
 
     <p>
         &lt;This email was sent as per <a href="https://my.sugarlearning.com/SSW/items/8291">https://my.sugarlearning.com/SSW/items/8291</a> /&gt;
@@ -72,9 +35,12 @@ Let's make the daily scrum great again.
     {
         dailyScrum = new DailyScrumModel
         {
-            DaysUntilNextBooking = 99,
-            InboxCount = 72,
-            TrelloBoardUrl = "https://trello.com/b/yourboard",
+            Summary = new()
+            {
+                DaysUntilNextBooking = 99,
+                InboxCount = 72,
+                TrelloBoardUrl = "https://trello.com/b/yourboard",
+            },
             YesterdaysProjects = [
                 new ProjectModel
                 {

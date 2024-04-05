@@ -1,0 +1,22 @@
+﻿<ul>
+    @foreach (var project in Projects)
+    {
+    <li>@project.Name</li>
+    <ul>
+        @foreach (var task in project.Tasks)
+        {
+        <li>@task.Name</li>
+        }
+    </ul>
+    }
+
+    @foreach (var task in Tasks)
+    {
+    <li>@task.Name</li>
+    }
+</ul>
+
+@code {
+    [Parameter] public required IEnumerable<ProjectModel> Projects { get; set; }
+    [Parameter] public required IEnumerable<TaskModel> Tasks { get; set; }
+}
