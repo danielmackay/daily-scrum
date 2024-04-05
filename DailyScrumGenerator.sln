@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{21C89A08
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DailyScrumGenerator.Unit.Tests", "tests\DailyScrumGenerator.Unit.Tests\DailyScrumGenerator.Unit.Tests.csproj", "{07A76FBE-083C-49AA-856E-0C1B95DEB7B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DailyScrum.Blazor", "src\DailyScrum.Blazor\DailyScrum.Blazor.csproj", "{351FF09F-D517-4930-8D86-607DB4B7904C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUI", "src\WebUI\WebUI.csproj", "{351FF09F-D517-4930-8D86-607DB4B7904C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
