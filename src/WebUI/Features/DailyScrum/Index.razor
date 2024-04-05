@@ -1,7 +1,6 @@
 ﻿@page "/daily-scrum"
-@using WebUI.Components.Components
-
-@* @using WebUI.Components.Components *@
+@using WebUI.Features.DailyScrum.Components
+@using Microsoft.AspNetCore.Components.Web
 
 <PageTitle>Daily Scrum</PageTitle>
 
@@ -11,68 +10,155 @@ Let's make the daily scrum great again.
 
 <div class="generated-email">
 
-    @* <component type="typeof(Foo)" render-mode="Static" param-Text="@("Hi SSWBenchMasters,")" /> *@
-
-    <Heading Text="Foo," />
-
     <Heading Text="Hi SSWBenchMasters," />
-    @*     <h3 style='font-size:12.0pt;font-family:"Calibri Light",sans-serif; *@
-    @* mso-fareast-font-family:"Times New Roman";color:#C83C3C;font-weight:normal'>Hi SSWBenchMasters,</h3> *@
 
     <ul>
-        <li>I have ♾️ days until my next client booking.</li>
-        <li>I have 77 emails in my inbox</li>
-        <li>My Trello board is at Daniel Mackay - SSW Backlog | Trello</li>
+        <li>I have @dailyScrum.DaysUntilNextBooking days until my next client booking.</li>
+        <li>I have @dailyScrum.InboxCount emails in my inbox</li>
+        <li>My Trello board is at <a href="@dailyScrum.TrelloBoardUrl">Daniel Mackay - SSW Backlog | Trello</a></li>
         <li>I have joined my Daily Scrum meeting ✅</li>
     </ul>
 
-    @* <component type="typeof(Foo)" render-mode="Static" param-Text="@("Yesterday I worked on:")" /> *@
+    <Heading Text="Yesterday I worked on:" />
 
     <ul>
-        <li>EasyLeave</li>
-        <ul>
-            <li>✅ Email - EasyLeave - Project Approval and Kick-Off</li>
-        </ul>
+        @foreach (var project in dailyScrum.YesterdaysProjects)
+        {
+            <li>@project.Name</li>
+            <ul>
+                @foreach (var task in project.Tasks)
+                {
+                    <li>@task.Name</li>
+                }
+            </ul>
+        }
 
-        <li>SAW</li>
-        <ul>
-            <li>✅ Email - Clean Architecture Workshop - Agenda Review</li>
-            <li>Domain Model - Re-Design</li>
-        </ul>
-
-        <li>Brainstorming</li>
-        <ul>
-            <li>Meeting - Idea Champion</li>
-        </ul>
-
-        <li>✅ Email - TinaCMS - UX Roadmap - Chewing the Fat 📈</li>
+        @foreach (var task in dailyScrum.YesterdaysTasks)
+        {
+            <li>@task.Name</li>
+        }
     </ul>
 
-    @* <component type="typeof(Foo)" render-mode="Static" param-Text="@("Today I'm Working On::")" /> *@
+    <Heading Text="Today I'm working on:" />
 
     <ul>
-        <li>EasyLeave</li>
+        @foreach (var project in dailyScrum.TodaysProjects)
+        {
+        <li>@project.Name</li>
         <ul>
-            <li>Email - EasyLeave - Architecture Review</li>
-            <li>Meeting - Project kick off</li>
-            <li>Setup Team</li>
+            @foreach (var task in project.Tasks)
+            {
+            <li>@task.Name</li>
+            }
         </ul>
+        }
 
-        <li>EagleEye</li>
-        <ul>
-            <li>Meeting - Refinement</li>
-            <li>Review - Ricks Design for history job</li>
-            <li>Email - SSW.EagleEye Repo - Visibility</li>
-        </ul>
-
-        <li>YakShaver</li>
-        <ul>
-            <li>Review - Isabels PR</li>
-            <li>Review - GitHub auth work</li>
-        </ul>
+        @foreach (var task in dailyScrum.TodaysTasks)
+        {
+        <li>@task.Name</li>
+        }
     </ul>
 
     <p>
         &lt;This email was sent as per <a href="https://my.sugarlearning.com/SSW/items/8291">https://my.sugarlearning.com/SSW/items/8291</a> /&gt;
     </p>
 </div>
+
+@code {
+
+    private DailyScrumModel dailyScrum;
+
+    protected override void OnInitialized()
+    {
+        dailyScrum = new DailyScrumModel
+        {
+            DaysUntilNextBooking = 99,
+            InboxCount = 72,
+            TrelloBoardUrl = "https://trello.com/b/yourboard",
+            YesterdaysProjects = [
+                new ProjectModel
+                {
+                    Name = "EasyLeave",
+                    Tasks =
+                    [
+                        new() { Status = TaskStatus.Done, Name = "Email - EasyLeave - Project Approval and Kick-Off" }
+                    ]
+                },
+                new ProjectModel
+                {
+                    Name = "SAW",
+                    Tasks =
+                    [
+                        new() { Status = TaskStatus.Done, Name = "Email - Clean Architecture Workshop - Agenda Review" },
+                        new() { Status = TaskStatus.Todo, Name = "Domain Model - Re-Design" }
+                    ]
+                },
+                new ProjectModel
+                {
+                    Name = "Brainstorming",
+                    Tasks =
+                    [
+                        new() { Status = TaskStatus.Done, Name = "Meeting - Idea Champion" }
+                    ]
+                },
+                new ProjectModel
+                {
+                    Name = "TinaCMS",
+                    Tasks =
+                    [
+                        new() { Status = TaskStatus.Done, Name = "Email - TinaCMS - UX Roadmap - Chewing the Fat 📈" }
+                    ]
+                }
+            ],
+            YesterdaysTasks = [
+                new TaskModel { Status = TaskStatus.Done, Name = "Email - EasyLeave - Project Approval and Kick-Off" },
+                new TaskModel { Status = TaskStatus.Done, Name = "Email - Clean Architecture Workshop - Agenda Review" },
+                new TaskModel { Status = TaskStatus.Todo, Name = "Domain Model - Re-Design" },
+                new TaskModel { Status = TaskStatus.Done, Name = "Meeting - Idea Champion" },
+                new TaskModel { Status = TaskStatus.Done, Name = "Email - TinaCMS - UX Roadmap - Chewing the Fat 📈" }
+            ],
+            TodaysProjects = [
+                new ProjectModel
+                {
+                    Name = "EasyLeave",
+                    Tasks =
+                    [
+                        new() { Status = TaskStatus.Todo, Name = "Email - EasyLeave - Architecture Review" },
+                        new() { Status = TaskStatus.Todo, Name = "Meeting - Project kick off" },
+                        new() { Status = TaskStatus.Todo, Name = "Setup Team" }
+                    ]
+                },
+                new ProjectModel
+                {
+                    Name = "EagleEye",
+                    Tasks =
+                    [
+                        new() { Status = TaskStatus.Todo, Name = "Meeting - Refinement" },
+                        new() { Status = TaskStatus.Todo, Name = "Review - Ricks Design for history job" },
+                        new() { Status = TaskStatus.Todo, Name = "Email - SSW.EagleEye Repo - Visibility" }
+                    ]
+                },
+                new ProjectModel
+                {
+                    Name = "YakShaver",
+                    Tasks =
+                    [
+                        new() { Status = TaskStatus.Todo, Name = "Review - Isabel's PR" },
+                        new() { Status = TaskStatus.Todo, Name = "Review - GitHub auth work" }
+                    ]
+                }
+            ],
+            TodaysTasks = [
+                new TaskModel { Status = TaskStatus.Todo, Name = "Email - EasyLeave - Architecture Review" },
+                new TaskModel { Status = TaskStatus.Todo, Name = "Meeting - Project kick off" },
+                new TaskModel { Status = TaskStatus.Todo, Name = "Setup Team" },
+                new TaskModel { Status = TaskStatus.Todo, Name = "Meeting - Refinement" },
+                new TaskModel { Status = TaskStatus.Todo, Name = "Review - Ricks Design for history job" },
+                new TaskModel { Status = TaskStatus.Todo, Name = "Email - SSW.EagleEye Repo - Visibility" },
+                new TaskModel { Status = TaskStatus.Todo, Name = "Review - Isabel's PR" },
+                new TaskModel { Status = TaskStatus.Todo, Name = "Review - GitHub auth work" }
+            ]
+        };
+    }
+
+}

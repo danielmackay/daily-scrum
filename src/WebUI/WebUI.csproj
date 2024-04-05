@@ -6,4 +6,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Components\Bar.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Heading.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Features\DailyScrum\Components\Heading.razor" />
+    </ItemGroup>
+
 </Project>
