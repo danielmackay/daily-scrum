@@ -1,19 +1,22 @@
 ﻿using Azure.Core;
-using Azure.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.Graph;
-using Microsoft.Graph.Me.ContactFolders.Item;
 using Microsoft.Graph.Models;
 
 namespace WebUI.Features.DailyScrum.Infrastructure;
 
 public class GraphService
 {
-    private const string _accessToken =
-        "";
+    private readonly IOptions<MicrosoftGraphOptions> _options;
+
+    public GraphService(IOptions<MicrosoftGraphOptions> options)
+    {
+        _options = options;
+    }
 
     public async Task<List<TodoTaskList>?> GetTodoLists()
     {
-        var credential = new JwtTokenCredential(_accessToken);
+        var credential = new JwtTokenCredential(_options.Value.AccessToken);
 
         // create a new instance of the GraphServiceClient
         var graphClient = new GraphServiceClient(credential);
@@ -26,7 +29,7 @@ public class GraphService
 
     public async Task<List<TodoTask>?> GetTodoItems()
     {
-        var credential = new JwtTokenCredential(_accessToken);
+        var credential = new JwtTokenCredential(_options.Value.AccessToken);
 
         // create a new instance of the GraphServiceClient
         var graphClient = new GraphServiceClient(credential);
@@ -40,30 +43,14 @@ public class GraphService
         return todoItems?.Value;
     }
 
-    public async Task<List<TodoTask>> GetTodaysTasks()
+    public async Task<List<TodoTask>> GetTasks(DateTime utcStart, DateTime utcEnd)
     {
-        var credential = new JwtTokenCredential(_accessToken);
+        var credential = new JwtTokenCredential(_options.Value.AccessToken);
 
         // create a new instance of the GraphServiceClient
         var graphClient = new GraphServiceClient(credential);
 
         var lists = await graphClient.Me.Todo.Lists.GetAsync();
-
-        // Assume you have a local DateTime
-        DateTime localDateTime = DateTime.Now.AddDays(-1);
-
-        // Find the start of the day
-        DateTime startOfDayLocal = localDateTime.Date;
-
-        // Find the end of the day
-        DateTime endOfDayLocal = localDateTime.Date.AddDays(1).AddTicks(-1);
-
-        // Convert to UTC
-        DateTime startOfDayUtc = startOfDayLocal.ToUniversalTime();
-        DateTime endOfDayUtc = endOfDayLocal.ToUniversalTime();
-
-        // yesterday
-        //var localToday = DateTimeOffset.Now.AddDays(-1);
 
         var tasks = new List<Task<TodoTaskCollectionResponse?>>();
 
@@ -74,7 +61,7 @@ public class GraphService
                 .Tasks
                 .GetAsync(cfg =>
                 {
-                    cfg.QueryParameters.Filter = $"LastModifiedDateTime gt {startOfDayUtc.ToString("o")} and LastModifiedDateTime lt {endOfDayUtc.ToString("o")}";
+                    cfg.QueryParameters.Filter = $"LastModifiedDateTime gt {utcStart.ToString("o")} and LastModifiedDateTime lt {utcEnd.ToString("o")}";
                 });
 
             tasks.Add(task);

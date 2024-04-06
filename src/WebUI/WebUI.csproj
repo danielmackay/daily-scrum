@@ -4,9 +4,11 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>a95c9cae-1961-43c7-bcd1-8173ed3c73fb</UserSecretsId>
     </PropertyGroup>
     
     <ItemGroup>
+        <PackageReference Include="MediatR" Version="12.2.0" />
         <PackageReference Include="Microsoft.Graph" Version="5.46.0" />
         <PackageReference Include="Microsoft.Graph.Core" Version="3.1.9" />
         <PackageReference Include="Azure.Core" Version="1.38.0" />

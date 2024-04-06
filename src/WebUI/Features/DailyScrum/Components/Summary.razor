@@ -1,10 +1,11 @@
-﻿<ul>
-    <li>I have @Model.DaysUntilNextBooking days until my next client booking.</li>
-    <li>I have @Model.InboxCount emails in my inbox</li>
-    <li>My Trello board is at <a href="@Model.TrelloBoardUrl">Daniel Mackay - SSW Backlog | Trello</a></li>
+﻿@using WebUI.Features.DailyScrum.Queries
+<ul>
+    <li>I have @ViewModel.DaysUntilNextBooking days until my next client booking.</li>
+    <li>I have @ViewModel.InboxCount emails in my inbox</li>
+    <li>My Trello board is at <a href="@ViewModel.TrelloBoardUrl">Daniel Mackay - SSW Backlog | Trello</a></li>
     <li>I have joined my Daily Scrum meeting ✅</li>
 </ul>
 
 @code {
-    [Parameter] public required SummaryModel Model { get; set; }
+    [Parameter] public required UserSummaryViewModel ViewModel { get; set; }
 }

@@ -1,9 +1,18 @@
+using System.Reflection;
+using WebUI.Common;
 using WebUI.Components;
+using WebUI.Host;
 
+var appAssembly = Assembly.GetExecutingAssembly();
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Framework Services
 builder.Services.AddRazorComponents();
+
+// App Services
+builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
+builder.Services.AddMediatR();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var app = builder.Build();
 
