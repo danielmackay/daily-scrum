@@ -10,8 +10,10 @@ public class Project
 
     public Project(string name, bool isSystemProject, IEnumerable<TaskItem> tasks)
     {
-        Name = name;
+        Name = RemoveEmojis(name);
         IsSystemProject = isSystemProject;
         _tasks.AddRange(tasks);
     }
+
+    private static string RemoveEmojis(string input) => input.Replace("✅", "").TrimStart();
 }

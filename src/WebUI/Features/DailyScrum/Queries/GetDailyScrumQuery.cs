@@ -48,14 +48,10 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
         var projects = graphTasks
             .Select(p => new ProjectViewModel
             {
-                Name = RemoveEmojis(p.Name),
+                Name = p.Name,
                 IsSystemProject = p.IsSystemProject,
                 Tasks = p.Tasks
-                    .Select(t => new TaskViewModel
-                    {
-                        Name = t.Name,
-                        Status = t.Status
-                    })
+                    .Select(t => new TaskViewModel { Name = t.Name })
                     .ToList()
             })
             .ToList();
@@ -92,6 +88,4 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
             _ => today.AddDays(-1)
         };
     }
-
-    private static string RemoveEmojis(string input) => input.Replace("✅", "").TrimStart();
 }

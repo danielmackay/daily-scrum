@@ -2,7 +2,6 @@
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using WebUI.Features.DailyScrum.Domain;
-using TaskStatus = WebUI.Features.DailyScrum.Domain.TaskStatus;
 
 namespace WebUI.Features.DailyScrum.Infrastructure;
 
@@ -78,7 +77,7 @@ public class GraphService
                 var title = kvp.Key.DisplayName;
                 var isSystemList = kvp.Key.WellknownListName != WellknownListName.None;
                 var tasks = kvp.Value.Result.Value
-                    .Select(t => new TaskItem(TaskStatus.Done, t.Title))
+                    .Select(t => new TaskItem(GetStatus(t.Status), t.Title))
                     .ToList();
                 return new Project(title, isSystemList, tasks);
             })
@@ -87,5 +86,16 @@ public class GraphService
             .ToList();
 
         return todaysTasks;
+    }
+
+    private Domain.TaskStatus GetStatus(Microsoft.Graph.Models.TaskStatus? status)
+    {
+        return status switch
+        {
+            Microsoft.Graph.Models.TaskStatus.Completed => Domain.TaskStatus.Done,
+            Microsoft.Graph.Models.TaskStatus.NotStarted => Domain.TaskStatus.Todo,
+            Microsoft.Graph.Models.TaskStatus.InProgress => Domain.TaskStatus.InProgress,
+            _ => Domain.TaskStatus.Todo,
+        };
     }
 }
