@@ -1,7 +1,8 @@
-﻿using Azure.Core;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using WebUI.Features.DailyScrum.Domain;
+using TaskStatus = WebUI.Features.DailyScrum.Domain.TaskStatus;
 
 namespace WebUI.Features.DailyScrum.Infrastructure;
 
@@ -43,16 +44,18 @@ public class GraphService
         return todoItems?.Value;
     }
 
-    public async Task<List<TodoTask>> GetTasks(DateTime utcStart, DateTime utcEnd)
+    public async Task<List<Project>> GetTasks(DateTime utcStart, DateTime utcEnd)
     {
         var credential = new JwtTokenCredential(_options.Value.AccessToken);
-
-        // create a new instance of the GraphServiceClient
         var graphClient = new GraphServiceClient(credential);
 
+        // NOTE: SHOULD be able to use OData to expand the child tasks, but I haven't been able to get this to work
         var lists = await graphClient.Me.Todo.Lists.GetAsync();
 
-        var tasks = new List<Task<TodoTaskCollectionResponse?>>();
+        //var tasks = new List<Task<TodoTaskCollectionResponse?>>();
+
+        var tasks = new Dictionary<TodoTaskList, Task<TodoTaskCollectionResponse?>>();
+
 
         foreach (var list in lists.Value)
         {
@@ -64,38 +67,25 @@ public class GraphService
                     cfg.QueryParameters.Filter = $"LastModifiedDateTime gt {utcStart.ToString("o")} and LastModifiedDateTime lt {utcEnd.ToString("o")}";
                 });
 
-            tasks.Add(task);
+            tasks.Add(list, task);
         }
 
-        var result = await Task.WhenAll(tasks);
+        var result = await Task.WhenAll(tasks.Values);
 
         var todaysTasks = tasks
-            .SelectMany(l => l.Result.Value)
+            .Select(kvp =>
+            {
+                var title = kvp.Key.DisplayName;
+                var isSystemList = kvp.Key.WellknownListName != WellknownListName.None;
+                var tasks = kvp.Value.Result.Value
+                    .Select(t => new TaskItem(TaskStatus.Done, t.Title))
+                    .ToList();
+                return new Project(title, isSystemList, tasks);
+            })
             // .Where(t => t.LastModifiedDateTime?.DateTime.Date == DateTime.UtcNow.Date)
+            .Where(p => p.Tasks.Count > 0)
             .ToList();
 
         return todaysTasks;
-    }
-}
-
-internal class JwtTokenCredential : TokenCredential
-{
-    private readonly string accessToken;
-
-    public JwtTokenCredential(string accessToken)
-    {
-        this.accessToken = accessToken;
-    }
-
-    public override AccessToken GetToken(TokenRequestContext requestContext, CancellationToken cancellationToken)
-    {
-        return new AccessToken(accessToken, DateTimeOffset.Now.AddDays(1));
-    }
-
-    public override ValueTask<AccessToken> GetTokenAsync(
-        TokenRequestContext requestContext,
-        CancellationToken cancellationToken)
-    {
-        return ValueTask.FromResult(GetToken(requestContext, cancellationToken));
     }
 }

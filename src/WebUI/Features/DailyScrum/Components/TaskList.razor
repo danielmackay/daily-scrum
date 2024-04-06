@@ -1,19 +1,22 @@
 ﻿@using WebUI.Features.DailyScrum.Queries
 <ul>
-    @foreach (var project in Projects)
+    @foreach (var project in Projects.Where(p => !p.IsSystemProject))
     {
-    <li>@project.Name</li>
-    <ul>
-        @foreach (var task in project.Tasks)
-        {
-        <li>@task.Name</li>
-        }
-    </ul>
+        <li>@project.Name</li>
+        <ul>
+            @foreach (var task in project.Tasks)
+            {
+                <li>@task.Name</li>
+            }
+        </ul>
     }
 
-    @foreach (var task in Tasks)
+    @foreach (var project in Projects.Where(p => p.IsSystemProject))
     {
-    <li>@task.Name</li>
+        @foreach (var task in project.Tasks)
+        {
+            <li>@task.Name</li>
+        }
     }
 </ul>
 

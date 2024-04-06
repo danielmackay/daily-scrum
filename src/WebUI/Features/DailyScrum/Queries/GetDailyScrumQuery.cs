@@ -24,38 +24,43 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
         };
 
         var today = GetToday();
-        var todaysTasks = await GetTasks(today);
+        var todaysProjects = await GetProjects(today);
 
         var yesterday = GetLastWorkingDay();
-        var yesterdaysTasks = await GetTasks(yesterday);
+        var yesterdaysProjects = await GetProjects(yesterday);
 
         return new DailyScrumViewModel
         {
             UserSummary = userSummary,
-            TodaysTasks = todaysTasks,
-            YesterdaysTasks = yesterdaysTasks,
+            TodaysProjects = todaysProjects,
+            YesterdaysProjects = yesterdaysProjects,
+
+            // TODO: Add tasks
         };
     }
 
-    private async Task<List<TaskViewModel>> GetTasks(DateOnly date)
+    private async Task<List<ProjectViewModel>> GetProjects(DateOnly date)
     {
         var (startOfDayUtc, endOfDayUtc) = GetTimeStamps(date);
 
         var graphTasks = await _graphService.GetTasks(startOfDayUtc, endOfDayUtc);
 
-        var todaysTasks = graphTasks
-            .Select(t => new TaskViewModel
+        var projects = graphTasks
+            .Select(p => new ProjectViewModel
             {
-                Name = t.Title,
-                Status = t.Status switch
-                {
-                    Microsoft.Graph.Models.TaskStatus.Completed => TaskStatus.Done,
-                    _ => TaskStatus.Todo
-                }
+                Name = RemoveEmojis(p.Name),
+                IsSystemProject = p.IsSystemProject,
+                Tasks = p.Tasks
+                    .Select(t => new TaskViewModel
+                    {
+                        Name = t.Name,
+                        Status = t.Status
+                    })
+                    .ToList()
             })
             .ToList();
 
-        return todaysTasks;
+        return projects;
     }
 
     private (DateTime StartOfDayUtc, DateTime EndOfDayUtc) GetTimeStamps(DateOnly localDate)
@@ -87,4 +92,6 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
             _ => today.AddDays(-1)
         };
     }
+
+    private static string RemoveEmojis(string input) => input.Replace("✅", "").TrimStart();
 }

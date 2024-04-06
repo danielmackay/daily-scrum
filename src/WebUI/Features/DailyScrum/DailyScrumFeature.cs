@@ -1,5 +1,4 @@
-﻿using WebUI.Common;
-using WebUI.Common.Configuration;
+﻿using WebUI.Common.Configuration;
 using WebUI.Common.Features;
 using WebUI.Features.DailyScrum.Infrastructure;
 

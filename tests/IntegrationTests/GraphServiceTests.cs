@@ -40,7 +40,7 @@ public class GraphServiceTests
     {
         var graphOptions = new MicrosoftGraphOptions
         {
-            AccessToken = "TODO"
+            AccessToken = ""
         };
 
         return Options.Create(graphOptions);
