@@ -17,6 +17,13 @@
 
     <ItemGroup>
       <AdditionalFiles Include="Features\DailyScrum\Components\Heading.razor" />
+      <AdditionalFiles Include="Features\DailyScrum\Components\Pages\Index.razor" />
+      <AdditionalFiles Include="Features\DailyScrum\Components\Pages\Preview.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Features\DailyScrum\Pages\Index.razor" />
+      <_ContentIncludedByDefault Remove="Features\DailyScrum\Pages\Preview.razor" />
     </ItemGroup>
 
 </Project>
