@@ -16,10 +16,7 @@ public class GraphService
 
     public async Task<List<TodoTaskList>?> GetTodoLists()
     {
-        var credential = new JwtTokenCredential(_options.Value.AccessToken);
-
-        // create a new instance of the GraphServiceClient
-        var graphClient = new GraphServiceClient(credential);
+        var graphClient = GetGraphServiceClient();
 
         // get the user's todo items
         var todoItems = await graphClient.Me.Todo.Lists.GetAsync();
@@ -29,10 +26,7 @@ public class GraphService
 
     public async Task<List<TodoTask>?> GetTodoItems()
     {
-        var credential = new JwtTokenCredential(_options.Value.AccessToken);
-
-        // create a new instance of the GraphServiceClient
-        var graphClient = new GraphServiceClient(credential);
+        var graphClient = GetGraphServiceClient();
 
         // get the user's todo items
         var todoItems = await graphClient.Me.Todo
@@ -45,8 +39,7 @@ public class GraphService
 
     public async Task<List<Project>> GetTasks(DateTime utcStart, DateTime utcEnd)
     {
-        var credential = new JwtTokenCredential(_options.Value.AccessToken);
-        var graphClient = new GraphServiceClient(credential);
+        var graphClient = GetGraphServiceClient();
 
         // NOTE: SHOULD be able to use OData to expand the child tasks, but I haven't been able to get this to work
         var lists = await graphClient.Me.Todo.Lists.GetAsync();
@@ -88,6 +81,12 @@ public class GraphService
         return todaysTasks;
     }
 
+    private GraphServiceClient GetGraphServiceClient()
+    {
+        var credential = new JwtTokenCredential(_options.Value.AccessToken);
+        return new GraphServiceClient(credential);
+    }
+
     private Domain.TaskStatus GetStatus(Microsoft.Graph.Models.TaskStatus? status)
     {
         return status switch
@@ -97,5 +96,15 @@ public class GraphService
             Microsoft.Graph.Models.TaskStatus.InProgress => Domain.TaskStatus.InProgress,
             _ => Domain.TaskStatus.Todo,
         };
+    }
+
+    public async Task<int> GetInboxCount()
+    {
+        var graphClient = GetGraphServiceClient();
+        var result = await graphClient.Me.MailFolders.GetAsync();
+
+        var inboxCount = result?.Value?.FirstOrDefault(f => f.DisplayName == "Inbox")?.TotalItemCount;
+
+        return inboxCount ?? 0;
     }
 }

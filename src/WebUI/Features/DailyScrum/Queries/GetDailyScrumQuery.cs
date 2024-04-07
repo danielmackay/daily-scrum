@@ -16,12 +16,7 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
 
     public async Task<DailyScrumViewModel> Handle(GetDailyScrumQuery request, CancellationToken cancellationToken)
     {
-        var userSummary = new UserSummaryViewModel
-        {
-            DaysUntilNextBooking = 99,
-            InboxCount = 72,
-            TrelloBoardUrl = "https://trello.com/b/yourboard",
-        };
+        var userSummary = await GetUserSummary();
 
         var today = GetToday();
         var todaysProjects = await GetProjects(today);
@@ -34,8 +29,18 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
             UserSummary = userSummary,
             TodaysProjects = todaysProjects,
             YesterdaysProjects = yesterdaysProjects,
+        };
+    }
 
-            // TODO: Add tasks
+    private async Task<UserSummaryViewModel> GetUserSummary()
+    {
+        var inboxCount = await _graphService.GetInboxCount();
+
+        return new UserSummaryViewModel
+        {
+            DaysUntilNextBooking = "♾️",
+            InboxCount = inboxCount,
+            TrelloBoardUrl = "https://trello.com/b/gYiilU64/daniel-mackay-ssw-backlog",
         };
     }
 

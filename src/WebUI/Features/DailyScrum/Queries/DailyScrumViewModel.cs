@@ -11,7 +11,7 @@ public class DailyScrumViewModel
 
 public class UserSummaryViewModel
 {
-    public int DaysUntilNextBooking { get; init; }
+    public required string DaysUntilNextBooking { get; init; }
     public int InboxCount { get; init; }
     public required string TrelloBoardUrl { get; init; }
 }

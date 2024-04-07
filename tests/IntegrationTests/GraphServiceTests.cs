@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using WebUI.Features.DailyScrum.Infrastructure;
@@ -44,6 +45,19 @@ public class GraphServiceTests
 
         // Act
         var lists = await sut.GetTasks(startOfDayUtc, endOfDayUtc);
+    }
+
+    [Fact]
+    public async Task GetInboxCount_ReturnsInboxCount()
+    {
+        // Arrange
+        var sut = CreateGraphService();
+
+        // Act
+        var inboxCount = await sut.GetInboxCount();
+
+        // Assert
+        inboxCount.Should().Be(84);
     }
 
     private GraphService CreateGraphService() => new GraphService(CreateOptions());
