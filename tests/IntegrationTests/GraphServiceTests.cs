@@ -7,7 +7,7 @@ namespace IntegrationTests;
 
 public class GraphServiceTests
 {
-    private readonly string _accessToken;
+    private readonly string? _accessToken;
 
     public GraphServiceTests()
     {
@@ -16,20 +16,6 @@ public class GraphServiceTests
             .Build();
 
         _accessToken = config["MicrosoftGraph:AccessToken"];
-    }
-
-    [Fact]
-    public async Task CanGetTodoLists()
-    {
-        var sut = CreateGraphService();
-        var lists = await sut.GetTodoLists();
-    }
-
-    [Fact]
-    public async Task CanGetTodoItems()
-    {
-        var sut = CreateGraphService();
-        var lists = await sut.GetTodoItems();
     }
 
     [Fact]

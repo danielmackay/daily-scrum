@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Graph.Reports.GetEmailActivityCountsWithPeriod;
 using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace WebUI.Features.DailyScrum.Queries;
@@ -7,15 +8,17 @@ public class GetDailyScrumQuery : IRequest<DailyScrumViewModel>;
 
 public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, DailyScrumViewModel>
 {
-    private readonly GraphService _graphService;
+    private readonly IGraphService _graphService;
 
-    public GetDailyScrumQueryHandler(GraphService graphService)
+    public GetDailyScrumQueryHandler(IGraphService graphService)
     {
         _graphService = graphService;
     }
 
     public async Task<DailyScrumViewModel> Handle(GetDailyScrumQuery request, CancellationToken cancellationToken)
     {
+        var email = GetEmail();
+
         var userSummary = await GetUserSummary();
 
         var today = GetToday();
@@ -29,6 +32,7 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
             UserSummary = userSummary,
             TodaysProjects = todaysProjects,
             YesterdaysProjects = yesterdaysProjects,
+            Email = email
         };
     }
 
@@ -62,6 +66,27 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
             .ToList();
 
         return projects;
+    }
+
+    private EmailViewModel GetEmail()
+    {
+        return new EmailViewModel
+        {
+            Subject = "Daniel Mackay - Daily Scrum",
+            To = new EmailParticipantViewModel
+            {
+                Name = "SSWBenchMasters",
+                Email = "SSWBenchMasters@ssw.com.au"
+            },
+            Cc =
+            [
+                new EmailParticipantViewModel
+                {
+                    Name = "DailyScrum",
+                    Email = "SSWDailyScrum@ssw.com.au"
+                }
+            ]
+        };
     }
 
     private (DateTime StartOfDayUtc, DateTime EndOfDayUtc) GetTimeStamps(DateOnly localDate)

@@ -9,10 +9,29 @@
 
 <h1>Daily Scrum - Preview</h1>
 
-<div class="generated-email">
+@if (_viewModel is not null)
+{
+    <div class="email-metadata">
+        <p>
+            <strong>Subject:</strong> @_viewModel.Email.Subject
+        </p>
+        <p>
+            <strong>To:</strong> @_viewModel.Email.To.Email
+        </p>
+        <p>
+            <strong>CC:</strong>
+            @foreach (var cc in _viewModel.Email.Cc)
+            {
+                @(cc.Email + ",")
+            }
+        </p>
+    </div>
 
-    @if (_viewModel is not null)
-    {
+    <div class="email-body">
+        <p>
+            <strong>Body:</strong>
+        </p>
+
         <Heading Text="Hi SSWBenchMasters,"/>
 
         <Summary ViewModel="_viewModel.UserSummary"/>
@@ -28,8 +47,12 @@
         <p>
             &lt;This email was sent as per <a href="https://my.sugarlearning.com/SSW/items/8291">https://my.sugarlearning.com/SSW/items/8291</a> /&gt;
         </p>
-    }
-</div>
+    </div>
+}
+else
+{
+    <p>Loading...</p>
+}
 
 @code {
 
