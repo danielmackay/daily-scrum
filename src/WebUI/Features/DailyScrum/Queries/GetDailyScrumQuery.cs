@@ -3,7 +3,7 @@ using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace WebUI.Features.DailyScrum.Queries;
 
-public record GetDailyScrumQuery(string Name, int? ClientDays, DateOnly? LastWorkingDay)
+public record GetDailyScrumQuery(string Name, int? ClientDays, DateOnly? LastWorkingDay, string AccessToken)
     : IRequest<DailyScrumViewModel>;
 
 public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, DailyScrumViewModel>
@@ -17,6 +17,8 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
 
     public async Task<DailyScrumViewModel> Handle(GetDailyScrumQuery request, CancellationToken cancellationToken)
     {
+        _graphService.UpdateAccessToken(request.AccessToken);
+
         var email = GetEmail(request.Name);
 
         var userSummary = await GetUserSummary(request.ClientDays);

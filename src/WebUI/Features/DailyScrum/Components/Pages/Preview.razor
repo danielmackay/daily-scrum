@@ -64,15 +64,14 @@ else
     [SupplyParameterFromQuery]
     public DateOnly LastWorkingDay { get; set; }
 
-
-    // [SupplyParameterFromQuery(Name = "generate")]
-    // public DailyScrumInputModel InputModel { get; set; } = new DailyScrumInputModel();
+    [SupplyParameterFromQuery]
+    public string AccessToken { get; set; } = String.Empty;
 
     private DailyScrumViewModel? _viewModel;
 
     protected override async Task OnInitializedAsync()
     {
-        var query = new GetDailyScrumQuery(Name, ClientDays, LastWorkingDay);
+        var query = new GetDailyScrumQuery(Name, ClientDays, LastWorkingDay, AccessToken);
         _viewModel = await Sender.Send(query);
         await base.OnInitializedAsync();
     }

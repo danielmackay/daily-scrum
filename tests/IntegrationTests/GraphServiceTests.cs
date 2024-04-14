@@ -1,13 +1,12 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace IntegrationTests;
 
 public class GraphServiceTests
 {
-    private readonly string? _accessToken;
+    private readonly string _accessToken;
 
     public GraphServiceTests()
     {
@@ -15,7 +14,8 @@ public class GraphServiceTests
             .AddUserSecrets<GraphServiceTests>()
             .Build();
 
-        _accessToken = config["MicrosoftGraph:AccessToken"];
+        _accessToken = config["MicrosoftGraph:AccessToken"]!;
+        ArgumentException.ThrowIfNullOrEmpty(_accessToken);
     }
 
     [Fact]
@@ -46,15 +46,10 @@ public class GraphServiceTests
         inboxCount.Should().Be(84);
     }
 
-    private GraphService CreateGraphService() => new GraphService(CreateOptions());
-
-    private IOptions<MicrosoftGraphOptions> CreateOptions()
+    private GraphService CreateGraphService()
     {
-        var graphOptions = new MicrosoftGraphOptions
-        {
-            AccessToken = _accessToken
-        };
-
-        return Options.Create(graphOptions);
+        var service = new GraphService();
+        service.UpdateAccessToken(_accessToken);
+        return service;
     }
 }

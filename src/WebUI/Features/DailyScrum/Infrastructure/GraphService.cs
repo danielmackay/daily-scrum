@@ -9,15 +9,20 @@ public interface IGraphService
 {
     Task<List<Project>> GetTasks(DateTime utcStart, DateTime utcEnd);
     Task<int> GetInboxCount();
+    void UpdateAccessToken(string accessToken);
 }
 
 public class GraphService : IGraphService
 {
-    private readonly IOptions<MicrosoftGraphOptions> _options;
+    private string _accessToken = String.Empty;
 
-    public GraphService(IOptions<MicrosoftGraphOptions> options)
+    public GraphService()
     {
-        _options = options;
+    }
+
+    public void UpdateAccessToken(string accessToken)
+    {
+        _accessToken = accessToken;
     }
 
     // public async Task<List<TodoTaskList>?> GetTodoLists()
@@ -91,7 +96,8 @@ public class GraphService : IGraphService
 
     private GraphServiceClient GetGraphServiceClient()
     {
-        var credential = new JwtTokenCredential(_options.Value.AccessToken);
+        ArgumentException.ThrowIfNullOrEmpty(_accessToken);
+        var credential = new JwtTokenCredential(_accessToken);
         return new GraphServiceClient(credential);
     }
 

@@ -13,4 +13,8 @@ public class MockGraphService : IGraphService
     {
         return Task.FromResult(99);
     }
+
+    public void UpdateAccessToken(string accessToken)
+    {
+    }
 }
