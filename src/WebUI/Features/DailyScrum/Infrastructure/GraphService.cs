@@ -76,6 +76,8 @@ public class GraphService : IGraphService
                 var title = kvp.Key.DisplayName;
                 var isSystemList = kvp.Key.WellknownListName != WellknownListName.None;
                 var tasks = kvp.Value.Result.Value
+                    .GroupBy(t => t.Title)
+                    .Select(g => g.First())
                     .Select(t => new TaskItem(GetStatus(t.Status), t.Title))
                     .ToList();
                 return new Project(title, isSystemList, tasks);

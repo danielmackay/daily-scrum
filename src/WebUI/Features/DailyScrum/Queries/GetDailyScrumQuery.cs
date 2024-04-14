@@ -106,5 +106,6 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
 
     private DateOnly GetToday() => DateOnly.FromDateTime(DateTime.Now);
 
-    private DateOnly GetLastWorkingDay(DateOnly? lastWorkingDay) => lastWorkingDay ?? DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+    private DateOnly GetLastWorkingDay(DateOnly? lastWorkingDay) =>
+        lastWorkingDay ?? DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
 }

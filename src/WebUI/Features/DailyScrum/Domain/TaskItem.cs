@@ -6,9 +6,11 @@ public class TaskItem
 
     public TaskStatus Status { get; }
     public string Name { get; }
+    // public string RawName { get; }
 
     public TaskItem(TaskStatus status, string name)
     {
+        // RawName = name;
         Status = OverrideStatus(ref name, status);
         Name = $"{GetEmojis(Status)} {name}";
     }
