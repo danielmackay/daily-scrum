@@ -55,12 +55,25 @@ else
 }
 
 @code {
+    [SupplyParameterFromQuery]
+    public string Name { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery]
+    public int? ClientDays { get; set; }
+
+    [SupplyParameterFromQuery]
+    public DateOnly LastWorkingDay { get; set; }
+
+
+    // [SupplyParameterFromQuery(Name = "generate")]
+    // public DailyScrumInputModel InputModel { get; set; } = new DailyScrumInputModel();
 
     private DailyScrumViewModel? _viewModel;
 
     protected override async Task OnInitializedAsync()
     {
-        _viewModel = await Sender.Send(new GetDailyScrumQuery());
+        var query = new GetDailyScrumQuery(Name, ClientDays, LastWorkingDay);
+        _viewModel = await Sender.Send(query);
         await base.OnInitializedAsync();
     }
 

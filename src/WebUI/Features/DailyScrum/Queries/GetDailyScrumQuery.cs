@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Microsoft.Graph.Reports.GetEmailActivityCountsWithPeriod;
 using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace WebUI.Features.DailyScrum.Queries;
 
-public class GetDailyScrumQuery : IRequest<DailyScrumViewModel>;
+public record GetDailyScrumQuery(string Name, int? ClientDays, DateOnly? LastWorkingDay)
+    : IRequest<DailyScrumViewModel>;
 
 public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, DailyScrumViewModel>
 {
@@ -17,14 +17,14 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
 
     public async Task<DailyScrumViewModel> Handle(GetDailyScrumQuery request, CancellationToken cancellationToken)
     {
-        var email = GetEmail();
+        var email = GetEmail(request.Name);
 
-        var userSummary = await GetUserSummary();
+        var userSummary = await GetUserSummary(request.ClientDays);
 
         var today = GetToday();
         var todaysProjects = await GetProjects(today);
 
-        var yesterday = GetLastWorkingDay();
+        var yesterday = GetLastWorkingDay(request.LastWorkingDay);
         var yesterdaysProjects = await GetProjects(yesterday);
 
         return new DailyScrumViewModel
@@ -36,13 +36,13 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
         };
     }
 
-    private async Task<UserSummaryViewModel> GetUserSummary()
+    private async Task<UserSummaryViewModel> GetUserSummary(int? clientDays)
     {
         var inboxCount = await _graphService.GetInboxCount();
 
         return new UserSummaryViewModel
         {
-            DaysUntilNextBooking = "♾️",
+            DaysUntilNextBooking = clientDays is null ? "♾️" : clientDays.Value.ToString(),
             InboxCount = inboxCount,
             TrelloBoardUrl = "https://trello.com/b/gYiilU64/daniel-mackay-ssw-backlog",
         };
@@ -68,11 +68,11 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
         return projects;
     }
 
-    private EmailViewModel GetEmail()
+    private EmailViewModel GetEmail(string name)
     {
         return new EmailViewModel
         {
-            Subject = "Daniel Mackay - Daily Scrum",
+            Subject = $"{name} - Daily Scrum",
             To = new EmailParticipantViewModel
             {
                 Name = "SSWBenchMasters",
@@ -106,16 +106,5 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
 
     private DateOnly GetToday() => DateOnly.FromDateTime(DateTime.Now);
 
-    private DateOnly GetLastWorkingDay()
-    {
-        var today = GetToday();
-        var weekDay = today.DayOfWeek;
-
-        return weekDay switch
-        {
-            DayOfWeek.Monday => today.AddDays(-3),
-            DayOfWeek.Sunday => today.AddDays(-2),
-            _ => today.AddDays(-1)
-        };
-    }
+    private DateOnly GetLastWorkingDay(DateOnly? lastWorkingDay) => lastWorkingDay ?? DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
 }
