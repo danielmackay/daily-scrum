@@ -1,0 +1,6 @@
+﻿services:
+  webui:
+    image: webui
+    build:
+      context: .
+      dockerfile: src/WebUI/Dockerfile

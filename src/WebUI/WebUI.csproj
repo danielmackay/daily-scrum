@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>a95c9cae-1961-43c7-bcd1-8173ed3c73fb</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
     
     <ItemGroup>
@@ -24,6 +25,12 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Features\DailyScrum\Pages\Index.razor" />
       <_ContentIncludedByDefault Remove="Features\DailyScrum\Pages\Preview.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
