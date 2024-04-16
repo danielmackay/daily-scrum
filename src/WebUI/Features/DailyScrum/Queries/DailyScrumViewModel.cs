@@ -1,4 +1,6 @@
-﻿namespace WebUI.Features.DailyScrum.Queries;
+﻿using WebUI.Common.ViewModels;
+
+namespace WebUI.Features.DailyScrum.Queries;
 
 public class DailyScrumViewModel
 {
@@ -32,11 +34,4 @@ public class EmailParticipantViewModel
 public class TaskViewModel
 {
     public string Name { get; init; }
-}
-
-public class ProjectViewModel
-{
-    public string Name { get; init; }
-    public bool IsSystemProject { get; init; }
-    public IEnumerable<TaskViewModel> Tasks { get; init; }
 }

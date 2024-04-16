@@ -1,6 +1,7 @@
 ﻿@page "/daily-scrum"
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
 @using System.Net
 @inject NavigationManager NavigationManager
 
@@ -35,7 +36,7 @@
         <span>Acquire token from <a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Microsoft Graph Explorer</a></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Generate</button>
+    <button type="submit" class="btn btn-primary">Create Email</button>
 </EditForm>
 
 @code {
@@ -51,5 +52,20 @@
         var url = $"/daily-scrum/preview?name={Model.Name}&clientDays={Model.ClientDays}&lastWorkingDay={Model.LastWorkingDay.ToString("O")}&accessToken={accessToken}";
         //var encodedUrl = WebUtility.UrlEncode(url);
         NavigationManager.NavigateTo(url, true);
+    }
+
+    public class DailyScrumInputModel
+    {
+        [Required]
+        public string Name { get; set; } = String.Empty;
+
+        [Required]
+        public string AccessToken { get; set; } = String.Empty;
+
+        // NOTE: THis needs to be a string due to the following bug with nullable fields
+        // https://github.com/dotnet/aspnetcore/issues/52195
+        public string ClientDays { get; set; } = String.Empty;
+
+        public DateOnly LastWorkingDay { get; set; } = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
     }
 }

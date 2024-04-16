@@ -1,4 +1,5 @@
-﻿@using WebUI.Features.DailyScrum.Queries
+﻿@using WebUI.Common.ViewModels
+
 <ul>
     @foreach (var project in Projects.Where(p => !p.IsSystemProject))
     {
@@ -22,5 +23,4 @@
 
 @code {
     [Parameter] public required IEnumerable<ProjectViewModel> Projects { get; set; }
-    //[Parameter] public required IEnumerable<TaskViewModel> Tasks { get; set; }
 }
