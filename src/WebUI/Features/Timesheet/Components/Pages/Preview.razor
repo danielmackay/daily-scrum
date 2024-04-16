@@ -31,13 +31,12 @@ else
 
 @code {
     [SupplyParameterFromQuery] private DateOnly Date { get; set; }
-    [SupplyParameterFromQuery] private string AccessToken { get; set; } = string.Empty;
 
     private TimesheetViewModel? _viewModel;
 
     protected override async Task OnInitializedAsync()
     {
-        var query = new GetTimeSheetNotesQuery(Date, AccessToken);
+        var query = new GetTimeSheetNotesQuery(Date);
         _viewModel = await Sender.Send(query);
         await base.OnInitializedAsync();
     }

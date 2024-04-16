@@ -2,8 +2,8 @@
 @using MediatR
 @using WebUI.Features.DailyScrum.Components
 @using Microsoft.AspNetCore.Components.Web
-@using WebUI.Common.ViewModels
 @using WebUI.Features.DailyScrum.Queries
+@using WebUI.Common.Components
 @inject ISender Sender
 
 <PageTitle>Daily Scrum</PageTitle>
@@ -65,14 +65,11 @@ else
     [SupplyParameterFromQuery]
     public DateOnly LastWorkingDay { get; set; }
 
-    [SupplyParameterFromQuery]
-    public string AccessToken { get; set; } = String.Empty;
-
     private DailyScrumViewModel? _viewModel;
 
     protected override async Task OnInitializedAsync()
     {
-        var query = new GetDailyScrumQuery(Name, ClientDays, LastWorkingDay, AccessToken);
+        var query = new GetDailyScrumQuery(Name, ClientDays, LastWorkingDay);
         _viewModel = await Sender.Send(query);
         await base.OnInitializedAsync();
     }

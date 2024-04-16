@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Reflection;
 using WebUI.Common;
+using WebUI.Common.Identity;
 using WebUI.Components;
 using WebUI.Host;
 
@@ -13,7 +14,7 @@ builder.Services.AddRazorComponents();
 // App Services
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
 builder.Services.AddMediatR();
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {

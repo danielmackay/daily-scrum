@@ -5,7 +5,7 @@ using WebUI.Features.DailyScrum.Queries;
 
 namespace WebUI.Features.Timesheet.Queries;
 
-public record GetTimeSheetNotesQuery(DateOnly Date, string AccessToken) : IRequest<TimesheetViewModel>;
+public record GetTimeSheetNotesQuery(DateOnly Date) : IRequest<TimesheetViewModel>;
 
 public class GetTimeSheetNotesQueryHandler : IRequestHandler<GetTimeSheetNotesQuery, TimesheetViewModel>
 {
@@ -18,8 +18,6 @@ public class GetTimeSheetNotesQueryHandler : IRequestHandler<GetTimeSheetNotesQu
 
     public async Task<TimesheetViewModel> Handle(GetTimeSheetNotesQuery request, CancellationToken cancellationToken)
     {
-        _graphService.UpdateAccessToken(request.AccessToken);
-
         var projects = await GetProjects(request.Date);
 
         return new TimesheetViewModel
