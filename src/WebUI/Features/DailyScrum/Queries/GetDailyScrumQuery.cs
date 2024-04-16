@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using WebUI.Common.ViewModels;
 using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace WebUI.Features.DailyScrum.Queries;
@@ -50,6 +51,7 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
         };
     }
 
+    // TODO: Consider refactoring into a common service
     private async Task<List<ProjectViewModel>> GetProjects(DateOnly date)
     {
         var (startOfDayUtc, endOfDayUtc) = GetTimeStamps(date);
@@ -91,6 +93,7 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
         };
     }
 
+    // TODO: Consider refactoring into a common service
     private (DateTime StartOfDayUtc, DateTime EndOfDayUtc) GetTimeStamps(DateOnly localDate)
     {
         // Find the start of the day

@@ -1,0 +1,45 @@
+﻿@page "/timesheet/notes"
+@using MediatR
+@using WebUI.Features.DailyScrum.Components
+@using Microsoft.AspNetCore.Components.Web
+@using WebUI.Features.Timesheet.Queries
+@using WebUI.Common.Components
+@inject ISender Sender
+
+<PageTitle>Timesheet</PageTitle>
+
+<h1>Timesheet - Notes</h1>
+
+@if (_viewModel is not null)
+{
+    <div class="email-body">
+        <p>
+            <strong>Date:</strong> @Date
+        </p>
+
+        <p>
+            <strong>Notes:</strong>
+        </p>
+
+        <TaskList Projects="_viewModel.Projects"/>
+    </div>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    [SupplyParameterFromQuery] private DateOnly Date { get; set; }
+    [SupplyParameterFromQuery] private string AccessToken { get; set; } = string.Empty;
+
+    private TimesheetViewModel? _viewModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var query = new GetTimeSheetNotesQuery(Date, AccessToken);
+        _viewModel = await Sender.Send(query);
+        await base.OnInitializedAsync();
+    }
+
+}
