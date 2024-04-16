@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using WebUI.Common.Identity;
 using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace IntegrationTests;
@@ -48,8 +49,9 @@ public class GraphServiceTests
 
     private GraphService CreateGraphService()
     {
-        var service = new GraphService();
-        service.UpdateAccessToken(_accessToken);
+        var userService = new CurrentUserService();
+        userService.UpdateAccessToken(_accessToken);
+        var service = new GraphService(userService);
         return service;
     }
 }
