@@ -1,6 +1,8 @@
 ﻿services:
-  webui:
+  daily-scrum:
     image: webui
+    ports:
+      - 6001:80
     build:
       context: .
       dockerfile: src/WebUI/Dockerfile
