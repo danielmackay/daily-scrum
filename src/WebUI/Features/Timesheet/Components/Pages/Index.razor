@@ -2,7 +2,6 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Forms
 @using System.ComponentModel.DataAnnotations
-@using System.Net
 @inject NavigationManager NavigationManager
 
 <PageTitle>Timesheet Notes</PageTitle>
@@ -20,12 +19,6 @@
         <InputDate id="date" class="form-control" @bind-Value="Model.Date"/>
     </div>
 
-    <div class="form-group" style="margin-bottom: 20px">
-        <label for="accessToken">Access Token:</label>
-        <InputText id="accessToken" class="form-control" @bind-Value="Model.AccessToken"/>
-        <span>Acquire token from <a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Microsoft Graph Explorer</a></span>
-    </div>
-
     <button type="submit" class="btn btn-primary">Create Notes</button>
 </EditForm>
 
@@ -37,9 +30,7 @@
         // NOTE: This throws an exception, but apparently it's expected 🤦
         // https://github.com/dotnet/aspnetcore/issues/50478
 
-        var accessToken = WebUtility.UrlEncode(Model.AccessToken);
-
-        var url = $"/timesheet/notes?date={Model.Date.ToString("O")}&accessToken={accessToken}";
+        var url = $"/timesheet/notes?date={Model.Date.ToString("O")}";
         NavigationManager.NavigateTo(url, true);
     }
 
@@ -47,8 +38,5 @@
     {
         [Required]
         public DateOnly Date { get; set; } = DateOnly.FromDateTime(DateTime.Now);
-
-        [Required]
-        public string AccessToken { get; set; } = String.Empty;
     }
 }

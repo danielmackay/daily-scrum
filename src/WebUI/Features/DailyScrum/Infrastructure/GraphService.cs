@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using WebUI.Common.Identity;
 using WebUI.Features.DailyScrum.Domain;
 
 namespace WebUI.Features.DailyScrum.Infrastructure;
@@ -9,20 +10,15 @@ public interface IGraphService
 {
     Task<List<Project>> GetTasks(DateTime utcStart, DateTime utcEnd);
     Task<int> GetInboxCount();
-    void UpdateAccessToken(string accessToken);
 }
 
 public class GraphService : IGraphService
 {
-    private string _accessToken = String.Empty;
+    private readonly ICurrentUserService _currentUserService;
 
-    public GraphService()
+    public GraphService(ICurrentUserService currentUserService)
     {
-    }
-
-    public void UpdateAccessToken(string accessToken)
-    {
-        _accessToken = accessToken;
+        _currentUserService = currentUserService;
     }
 
     // public async Task<List<TodoTaskList>?> GetTodoLists()
@@ -96,8 +92,9 @@ public class GraphService : IGraphService
 
     private GraphServiceClient GetGraphServiceClient()
     {
-        ArgumentException.ThrowIfNullOrEmpty(_accessToken);
-        var credential = new JwtTokenCredential(_accessToken);
+        var accessToken = _currentUserService.AccessToken;
+        ArgumentException.ThrowIfNullOrEmpty(accessToken);
+        var credential = new JwtTokenCredential(accessToken);
         return new GraphServiceClient(credential);
     }
 

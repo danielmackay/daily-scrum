@@ -29,7 +29,7 @@ dotnet run
 Using docker can be helpful to always keep the application running in a container.
 
 ```bash
-docker compose up
+docker compose up -d
 ```
 
 ## Usage

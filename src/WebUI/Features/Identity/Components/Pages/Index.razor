@@ -1,0 +1,53 @@
+﻿@page "/identity"
+@using MediatR
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using WebUI.Features.Identity.Commands
+@inject ISender Mediator
+
+<PageTitle>Identity</PageTitle>
+
+<h1>Identity</h1>
+
+<p>Let's make the Identity great again.</p>
+
+<EditForm Model="@Model" OnValidSubmit="@HandleValidSubmit" FormName="generate" Enhance="true">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div class="form-group" style="margin-bottom: 20px">
+        <label for="accessToken">Access Token:</label>
+        <InputText id="accessToken" class="form-control" @bind-Value="Model.AccessToken"/>
+        <span>Acquire token from <a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Microsoft Graph Explorer</a></span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-info" role="alert">
+            @Model.Message
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Update Token</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm] private InputModel Model { get; set; } = new();
+
+    private async Task HandleValidSubmit()
+    {
+        var cmd = new UpdateAccessTokenCommand(Model.AccessToken);
+        await Mediator.Send(cmd);
+
+        Model.Message = "Access Token Updated";
+    }
+
+    public class InputModel
+    {
+        [Required] public string AccessToken { get; set; } = String.Empty;
+
+        public string Message { get; set; } = String.Empty;
+    }
+
+}

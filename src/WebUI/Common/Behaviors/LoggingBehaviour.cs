@@ -1,4 +1,5 @@
 ﻿using MediatR.Pipeline;
+using WebUI.Common.Identity;
 
 namespace WebUI.Common.Behaviors;
 
