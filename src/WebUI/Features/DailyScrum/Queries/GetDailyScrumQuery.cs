@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using WebUI.Common.Services;
 using WebUI.Common.ViewModels;
 using WebUI.Features.DailyScrum.Infrastructure;
 
@@ -10,10 +11,12 @@ public record GetDailyScrumQuery(string Name, int? ClientDays, DateOnly? LastWor
 public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, DailyScrumViewModel>
 {
     private readonly IGraphService _graphService;
+    private readonly TimeProvider _timeProvider;
 
-    public GetDailyScrumQueryHandler(IGraphService graphService)
+    public GetDailyScrumQueryHandler(IGraphService graphService, TimeProvider timeProvider)
     {
         _graphService = graphService;
+        _timeProvider = timeProvider;
     }
 
     public async Task<DailyScrumViewModel> Handle(GetDailyScrumQuery request, CancellationToken cancellationToken)
@@ -22,7 +25,7 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
 
         var userSummary = await GetUserSummary(request.ClientDays);
 
-        var today = GetToday();
+        var today = _timeProvider.GetToday();
         var todaysProjects = await GetProjects(today);
 
         var yesterday = GetLastWorkingDay(request.LastWorkingDay);
@@ -107,8 +110,6 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
         return (startOfDayUtc, endOfDayUtc);
     }
 
-    private DateOnly GetToday() => DateOnly.FromDateTime(DateTime.Now);
-
     private DateOnly GetLastWorkingDay(DateOnly? lastWorkingDay) =>
-        lastWorkingDay ?? DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+        lastWorkingDay ?? _timeProvider.GetToday().AddDays(-1);
 }
