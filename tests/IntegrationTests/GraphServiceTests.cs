@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using WebUI.Common.Identity;
 using WebUI.Common.Services;
 using WebUI.Features.DailyScrum.Infrastructure;
@@ -53,7 +54,9 @@ public class GraphServiceTests
     {
         var userService = new CurrentUserService();
         userService.UpdateAccessToken(_accessToken);
-        var service = new GraphService(userService);
+        var timeProvider = new SydneyTimeProvider();
+        var logger = new Logger<GraphService>(new LoggerFactory());
+        var service = new GraphService(userService, logger);
         return service;
     }
 }

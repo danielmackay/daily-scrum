@@ -113,3 +113,8 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
     private DateOnly GetLastWorkingDay(DateOnly? lastWorkingDay) =>
         lastWorkingDay ?? _timeProvider.GetToday().AddDays(-1);
 }
+
+public class ProjectsService
+{
+
+}
