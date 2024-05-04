@@ -2,7 +2,9 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Forms
 @using System.ComponentModel.DataAnnotations
+@using WebUI.Common.Services
 @inject NavigationManager NavigationManager
+@inject TimeProvider TimeProvider
 
 <PageTitle>Timesheet Notes</PageTitle>
 
@@ -37,6 +39,12 @@
     public class InputModel
     {
         [Required]
-        public DateOnly Date { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        public DateOnly Date { get; set; }
     }
+
+    protected override void OnInitialized()
+    {
+        Model.Date = TimeProvider.GetToday();
+    }
+
 }

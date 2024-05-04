@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using WebUI.Common.Identity;
+using WebUI.Common.Services;
 using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace IntegrationTests;
@@ -24,7 +25,8 @@ public class GraphServiceTests
     {
         // Arrange
         var sut = CreateGraphService();
-        var today = DateOnly.FromDateTime(DateTime.Now);
+        var timeProvider = new SydneyTimeProvider();
+        var today = timeProvider.GetToday();
         var startOfDayLocal = today.ToDateTime(TimeOnly.MinValue);
         var endOfDayLocal = today.ToDateTime(TimeOnly.MaxValue);
         var startOfDayUtc = startOfDayLocal.ToUniversalTime();
