@@ -5,9 +5,6 @@ using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace WebUI.Features.DailyScrum.Queries;
 
-// TODO: Timezones are still not matching up. locally UTC times are working (i.e. in the middle of the day),
-// But on docker they are from midnight to midnight (which is not correct)
-
 public record GetDailyScrumQuery(string Name, int? ClientDays, DateOnly? LastWorkingDay)
     : IRequest<DailyScrumViewModel>;
 
