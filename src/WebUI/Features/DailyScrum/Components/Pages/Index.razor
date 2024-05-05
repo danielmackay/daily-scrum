@@ -61,6 +61,7 @@
 
     protected override void OnInitialized()
     {
-        Model.LastWorkingDay = TimeProvider.GetToday().AddDays(-1);
+        if (Model.LastWorkingDay == default)
+            Model.LastWorkingDay = TimeProvider.GetToday().AddDays(-1);
     }
 }
