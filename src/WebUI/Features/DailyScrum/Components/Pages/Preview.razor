@@ -57,9 +57,6 @@ else
 
 @code {
     [SupplyParameterFromQuery]
-    public string Name { get; set; } = string.Empty;
-
-    [SupplyParameterFromQuery]
     public int? ClientDays { get; set; }
 
     [SupplyParameterFromQuery]
@@ -69,7 +66,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var query = new GetDailyScrumQuery(Name, ClientDays, LastWorkingDay);
+        var query = new GetDailyScrumQuery(ClientDays, LastWorkingDay);
         _viewModel = await Sender.Send(query);
         await base.OnInitializedAsync();
     }
