@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using WebUI.Common.Services;
 using WebUI.Common.ViewModels;
 using WebUI.Features.DailyScrum.Infrastructure;
 using WebUI.Features.DailyScrum.Queries;
@@ -14,11 +15,13 @@ public record GetTimeSheetNotesQuery(DateOnly Date) : IRequest<TimesheetViewMode
 public class GetTimeSheetNotesQueryHandler : IRequestHandler<GetTimeSheetNotesQuery, TimesheetViewModel>
 {
     private readonly IGraphService _graphService;
+    private readonly TimeProvider _timeProvider;
     private readonly ILogger<GetTimeSheetNotesQueryHandler> _logger;
 
-    public GetTimeSheetNotesQueryHandler(IGraphService graphService, ILogger<GetTimeSheetNotesQueryHandler> logger)
+    public GetTimeSheetNotesQueryHandler(IGraphService graphService, TimeProvider timeProvider, ILogger<GetTimeSheetNotesQueryHandler> logger)
     {
         _graphService = graphService;
+        _timeProvider = timeProvider;
         _logger = logger;
     }
 
@@ -37,10 +40,10 @@ public class GetTimeSheetNotesQueryHandler : IRequestHandler<GetTimeSheetNotesQu
     // TODO: Consider refactoring into a common service
     private async Task<List<ProjectViewModel>> GetProjects(DateOnly date)
     {
-        // create a date based on a specific timezone
+        var startOfDayUtc = _timeProvider.GetStartOfDayUtc(date);
+        var endOfDayUtc = _timeProvider.GetEndOfDayUtc(date);
 
-
-        var (startOfDayUtc, endOfDayUtc) = GetTimeStamps(date);
+        _logger.LogInformation("Getting projects for {Date} ({StartOfDayUtc} to {EndOfDayUtc})", date, startOfDayUtc, endOfDayUtc);
 
         var graphTasks = await _graphService.GetTasks(startOfDayUtc, endOfDayUtc);
 
@@ -56,37 +59,5 @@ public class GetTimeSheetNotesQueryHandler : IRequestHandler<GetTimeSheetNotesQu
             .ToList();
 
         return projects;
-    }
-
-    // TODO: Consider refactoring into a common service
-    private (DateTime StartOfDayUtc, DateTime EndOfDayUtc) GetTimeStamps(DateOnly localDate)
-    {
-        // Get the Sydney timezone
-        var sydneyTimeZone = TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time");
-
-        // Find the start and end of the day in Sydney time
-        var startOfDaySydney = localDate.ToDateTime(TimeOnly.MinValue);
-        var endOfDaySydney = localDate.ToDateTime(TimeOnly.MaxValue);
-
-        // Convert the start and end of the day to UTC
-        var startOfDayUtc = TimeZoneInfo.ConvertTimeToUtc(startOfDaySydney, sydneyTimeZone);
-        var endOfDayUtc = TimeZoneInfo.ConvertTimeToUtc(endOfDaySydney, sydneyTimeZone);
-
-        _logger.LogInformation("Start of day: {StartOfDayUtc}, End of day: {EndOfDayUtc}", startOfDayUtc, endOfDayUtc);
-
-        return (startOfDayUtc, endOfDayUtc);
-
-
-        // Find the start of the day
-        // var startOfDayLocal = localDate.ToDateTime(TimeOnly.MinValue);
-        //
-        // // Find the end of the day
-        // var endOfDayLocal = localDate.ToDateTime(TimeOnly.MaxValue);
-        //
-        // // Convert to UTC
-        // var startOfDayUtc = startOfDayLocal.ToUniversalTime();
-        // var endOfDayUtc = endOfDayLocal.ToUniversalTime();
-        //
-        // return (startOfDayUtc, endOfDayUtc);
     }
 }
