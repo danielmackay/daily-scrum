@@ -2,21 +2,39 @@
 
 public interface ICurrentUserService
 {
-    public string? UserId { get; }
+    string UserId { get; }
 
-    public string AccessToken { get; }
+    string AccessToken { get; }
+    string FirstName { get; }
+    string LastName { get; }
 
-    public void UpdateAccessToken(string token);
+    void UpdateAccessToken(string token);
+    void UpdateName(string firstName, string lastName);
 }
 
 public class CurrentUserService : ICurrentUserService
 {
-    public string? UserId { get; } = Guid.NewGuid().ToString();
+    public string UserId { get; } = Guid.NewGuid().ToString();
 
-    public string? AccessToken { get; private set; }
+    public string AccessToken { get; private set; } = string.Empty;
+
+    public string FirstName { get; private set; } = string.Empty;
+
+    public string LastName { get; private set; } = string.Empty;
 
     public void UpdateAccessToken(string token)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(token);
+
         AccessToken = token;
+    }
+
+    public void UpdateName(string firstName, string lastName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
+
+        FirstName = firstName;
+        LastName = lastName;
     }
 }

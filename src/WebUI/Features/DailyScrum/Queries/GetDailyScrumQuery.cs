@@ -1,29 +1,32 @@
 ﻿using MediatR;
+using WebUI.Common.Identity;
 using WebUI.Common.Services;
 using WebUI.Common.ViewModels;
 using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace WebUI.Features.DailyScrum.Queries;
 
-public record GetDailyScrumQuery(string Name, int? ClientDays, DateOnly? LastWorkingDay)
+public record GetDailyScrumQuery(int? ClientDays, DateOnly? LastWorkingDay)
     : IRequest<DailyScrumViewModel>;
 
 public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, DailyScrumViewModel>
 {
     private readonly IGraphService _graphService;
     private readonly TimeProvider _timeProvider;
+    private readonly ICurrentUserService _currentUserService;
     private readonly ILogger<GetDailyScrumQueryHandler> _logger;
 
-    public GetDailyScrumQueryHandler(IGraphService graphService, TimeProvider timeProvider, ILogger<GetDailyScrumQueryHandler> logger)
+    public GetDailyScrumQueryHandler(IGraphService graphService, TimeProvider timeProvider, ICurrentUserService currentUserService, ILogger<GetDailyScrumQueryHandler> logger)
     {
         _graphService = graphService;
         _timeProvider = timeProvider;
+        _currentUserService = currentUserService;
         _logger = logger;
     }
 
     public async Task<DailyScrumViewModel> Handle(GetDailyScrumQuery request, CancellationToken cancellationToken)
     {
-        var email = GetEmail(request.Name);
+        var email = GetEmail();
 
         var userSummary = await GetUserSummary(request.ClientDays);
 
@@ -81,11 +84,14 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
         return projects;
     }
 
-    private EmailViewModel GetEmail(string name)
+    private EmailViewModel GetEmail()
     {
+        var firstName = _currentUserService.FirstName;
+        var lastName = _currentUserService.LastName;
+
         return new EmailViewModel
         {
-            Subject = $"{name} - Daily Scrum",
+            Subject = $"{firstName} {lastName} - Daily Scrum",
             To = new EmailParticipantViewModel
             {
                 Name = "SSWBenchMasters",
