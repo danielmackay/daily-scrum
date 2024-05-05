@@ -15,10 +15,12 @@ public interface IGraphService
 public class GraphService : IGraphService
 {
     private readonly ICurrentUserService _currentUserService;
+    private readonly ILogger<GraphService> _logger;
 
-    public GraphService(ICurrentUserService currentUserService)
+    public GraphService(ICurrentUserService currentUserService, ILogger<GraphService> logger)
     {
         _currentUserService = currentUserService;
+        _logger = logger;
     }
 
     // public async Task<List<TodoTaskList>?> GetTodoLists()
@@ -46,6 +48,8 @@ public class GraphService : IGraphService
 
     public async Task<List<Project>> GetTasks(DateTime utcStart, DateTime utcEnd)
     {
+        _logger.LogInformation("Getting tasks from {UtcStart} to {UtcEnd}", utcStart, utcEnd);
+
         var graphClient = GetGraphServiceClient();
 
         // NOTE: SHOULD be able to use OData to expand the child tasks, but I haven't been able to get this to work
@@ -54,7 +58,6 @@ public class GraphService : IGraphService
         //var tasks = new List<Task<TodoTaskCollectionResponse?>>();
 
         var tasks = new Dictionary<TodoTaskList, Task<TodoTaskCollectionResponse?>>();
-
 
         foreach (var list in lists.Value)
         {

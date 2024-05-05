@@ -1,23 +1,34 @@
 ﻿using MediatR;
+using WebUI.Common.Services;
 using WebUI.Common.ViewModels;
 using WebUI.Features.DailyScrum.Infrastructure;
 using WebUI.Features.DailyScrum.Queries;
 
 namespace WebUI.Features.Timesheet.Queries;
 
+// How should the time calculation work?
+// - user enters a date
+// - we assume that that date is in Sydney time
+//
 public record GetTimeSheetNotesQuery(DateOnly Date) : IRequest<TimesheetViewModel>;
 
 public class GetTimeSheetNotesQueryHandler : IRequestHandler<GetTimeSheetNotesQuery, TimesheetViewModel>
 {
     private readonly IGraphService _graphService;
+    private readonly TimeProvider _timeProvider;
+    private readonly ILogger<GetTimeSheetNotesQueryHandler> _logger;
 
-    public GetTimeSheetNotesQueryHandler(IGraphService graphService)
+    public GetTimeSheetNotesQueryHandler(IGraphService graphService, TimeProvider timeProvider, ILogger<GetTimeSheetNotesQueryHandler> logger)
     {
         _graphService = graphService;
+        _timeProvider = timeProvider;
+        _logger = logger;
     }
 
     public async Task<TimesheetViewModel> Handle(GetTimeSheetNotesQuery request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Getting timesheet notes for {Date}", request.Date);
+
         var projects = await GetProjects(request.Date);
 
         return new TimesheetViewModel
@@ -29,7 +40,10 @@ public class GetTimeSheetNotesQueryHandler : IRequestHandler<GetTimeSheetNotesQu
     // TODO: Consider refactoring into a common service
     private async Task<List<ProjectViewModel>> GetProjects(DateOnly date)
     {
-        var (startOfDayUtc, endOfDayUtc) = GetTimeStamps(date);
+        var startOfDayUtc = _timeProvider.GetStartOfDayUtc(date);
+        var endOfDayUtc = _timeProvider.GetEndOfDayUtc(date);
+
+        _logger.LogInformation("Getting projects for {Date} ({StartOfDayUtc} to {EndOfDayUtc})", date, startOfDayUtc, endOfDayUtc);
 
         var graphTasks = await _graphService.GetTasks(startOfDayUtc, endOfDayUtc);
 
@@ -45,21 +59,5 @@ public class GetTimeSheetNotesQueryHandler : IRequestHandler<GetTimeSheetNotesQu
             .ToList();
 
         return projects;
-    }
-
-    // TODO: Consider refactoring into a common service
-    private (DateTime StartOfDayUtc, DateTime EndOfDayUtc) GetTimeStamps(DateOnly localDate)
-    {
-        // Find the start of the day
-        var startOfDayLocal = localDate.ToDateTime(TimeOnly.MinValue);
-
-        // Find the end of the day
-        var endOfDayLocal = localDate.ToDateTime(TimeOnly.MaxValue);
-
-        // Convert to UTC
-        var startOfDayUtc = startOfDayLocal.ToUniversalTime();
-        var endOfDayUtc = endOfDayLocal.ToUniversalTime();
-
-        return (startOfDayUtc, endOfDayUtc);
     }
 }

@@ -1,6 +1,8 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using WebUI.Common.Identity;
+using WebUI.Common.Services;
 using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace IntegrationTests;
@@ -24,7 +26,8 @@ public class GraphServiceTests
     {
         // Arrange
         var sut = CreateGraphService();
-        var today = DateOnly.FromDateTime(DateTime.Now);
+        var timeProvider = new SydneyTimeProvider();
+        var today = timeProvider.GetToday();
         var startOfDayLocal = today.ToDateTime(TimeOnly.MinValue);
         var endOfDayLocal = today.ToDateTime(TimeOnly.MaxValue);
         var startOfDayUtc = startOfDayLocal.ToUniversalTime();
@@ -51,7 +54,9 @@ public class GraphServiceTests
     {
         var userService = new CurrentUserService();
         userService.UpdateAccessToken(_accessToken);
-        var service = new GraphService(userService);
+        var timeProvider = new SydneyTimeProvider();
+        var logger = new Logger<GraphService>(new LoggerFactory());
+        var service = new GraphService(userService, logger);
         return service;
     }
 }

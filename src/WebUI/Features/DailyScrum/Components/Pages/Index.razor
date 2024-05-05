@@ -2,7 +2,9 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Forms
 @using System.ComponentModel.DataAnnotations
+@using WebUI.Common.Services
 @inject NavigationManager NavigationManager
+@inject TimeProvider TimeProvider
 
 <PageTitle>Daily Scrum</PageTitle>
 
@@ -54,6 +56,12 @@
         // https://github.com/dotnet/aspnetcore/issues/52195
         public string ClientDays { get; set; } = String.Empty;
 
-        public DateOnly LastWorkingDay { get; set; } = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+        public DateOnly LastWorkingDay { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Model.LastWorkingDay == default)
+            Model.LastWorkingDay = TimeProvider.GetToday().AddDays(-1);
     }
 }

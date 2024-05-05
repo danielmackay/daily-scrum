@@ -1,4 +1,5 @@
 ﻿using WebUI.Common.Features;
+using WebUI.Common.Services;
 using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace WebUI.Features.DailyScrum;
@@ -10,5 +11,6 @@ public sealed class DailyScrumFeature : IFeature
         //services.AddOptionsWithValidation<MicrosoftGraphOptions>(MicrosoftGraphOptions.Section);
         //services.AddScoped<IGraphService, MockGraphService>();
         services.AddScoped<IGraphService, GraphService>();
+        services.AddScoped<TimeProvider, SydneyTimeProvider>();
     }
 }

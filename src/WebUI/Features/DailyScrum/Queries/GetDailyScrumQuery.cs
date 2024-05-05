@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using WebUI.Common.Services;
 using WebUI.Common.ViewModels;
 using WebUI.Features.DailyScrum.Infrastructure;
 
@@ -10,10 +11,14 @@ public record GetDailyScrumQuery(string Name, int? ClientDays, DateOnly? LastWor
 public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, DailyScrumViewModel>
 {
     private readonly IGraphService _graphService;
+    private readonly TimeProvider _timeProvider;
+    private readonly ILogger<GetDailyScrumQueryHandler> _logger;
 
-    public GetDailyScrumQueryHandler(IGraphService graphService)
+    public GetDailyScrumQueryHandler(IGraphService graphService, TimeProvider timeProvider, ILogger<GetDailyScrumQueryHandler> logger)
     {
         _graphService = graphService;
+        _timeProvider = timeProvider;
+        _logger = logger;
     }
 
     public async Task<DailyScrumViewModel> Handle(GetDailyScrumQuery request, CancellationToken cancellationToken)
@@ -22,7 +27,9 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
 
         var userSummary = await GetUserSummary(request.ClientDays);
 
-        var today = GetToday();
+        var today = _timeProvider.GetToday();
+        _logger.LogInformation("Getting projects for {Today}", today);
+
         var todaysProjects = await GetProjects(today);
 
         var yesterday = GetLastWorkingDay(request.LastWorkingDay);
@@ -52,7 +59,11 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
     // TODO: Consider refactoring into a common service
     private async Task<List<ProjectViewModel>> GetProjects(DateOnly date)
     {
-        var (startOfDayUtc, endOfDayUtc) = GetTimeStamps(date);
+        // TODO: This is not returning the correct timestamps on local vs docker
+        var startOfDayUtc = _timeProvider.GetStartOfDayUtc(date);
+        var endOfDayUtc = _timeProvider.GetEndOfDayUtc(date);
+
+        _logger.LogInformation("Getting projects for {Date} ({StartOfDayUtc} to {EndOfDayUtc})", date, startOfDayUtc, endOfDayUtc);
 
         var graphTasks = await _graphService.GetTasks(startOfDayUtc, endOfDayUtc);
 
@@ -91,24 +102,6 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
         };
     }
 
-    // TODO: Consider refactoring into a common service
-    private (DateTime StartOfDayUtc, DateTime EndOfDayUtc) GetTimeStamps(DateOnly localDate)
-    {
-        // Find the start of the day
-        var startOfDayLocal = localDate.ToDateTime(TimeOnly.MinValue);
-
-        // Find the end of the day
-        var endOfDayLocal = localDate.ToDateTime(TimeOnly.MaxValue);
-
-        // Convert to UTC
-        var startOfDayUtc = startOfDayLocal.ToUniversalTime();
-        var endOfDayUtc = endOfDayLocal.ToUniversalTime();
-
-        return (startOfDayUtc, endOfDayUtc);
-    }
-
-    private DateOnly GetToday() => DateOnly.FromDateTime(DateTime.Now);
-
     private DateOnly GetLastWorkingDay(DateOnly? lastWorkingDay) =>
-        lastWorkingDay ?? DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+        lastWorkingDay ?? _timeProvider.GetToday().AddDays(-1);
 }
