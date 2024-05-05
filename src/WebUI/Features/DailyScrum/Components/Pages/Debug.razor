@@ -1,0 +1,19 @@
+﻿@page "/daily-scrum/debug"
+@using Microsoft.AspNetCore.Components.Web
+@inject TimeProvider TimeProvider
+
+<PageTitle>Daily Scrum</PageTitle>
+
+<h1>Daily Scrum - Debug</h1>
+
+<p>Now - @_now</p>
+
+@code {
+    private DateTimeOffset _now;
+
+    protected override void OnInitialized()
+    {
+        _now = TimeProvider.GetLocalNow();
+    }
+
+}

@@ -44,7 +44,8 @@
 
     protected override void OnInitialized()
     {
-        Model.Date = TimeProvider.GetToday();
+        if (Model.Date == default)
+            Model.Date = TimeProvider.GetToday();
     }
 
 }

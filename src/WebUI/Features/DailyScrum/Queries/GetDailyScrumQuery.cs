@@ -5,6 +5,9 @@ using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace WebUI.Features.DailyScrum.Queries;
 
+// TODO: Timezones are still not matching up. locally UTC times are working (i.e. in the middle of the day),
+// But on docker they are from midnight to midnight (which is not correct)
+
 public record GetDailyScrumQuery(string Name, int? ClientDays, DateOnly? LastWorkingDay)
     : IRequest<DailyScrumViewModel>;
 
@@ -12,11 +15,13 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
 {
     private readonly IGraphService _graphService;
     private readonly TimeProvider _timeProvider;
+    private readonly ILogger<GetDailyScrumQueryHandler> _logger;
 
-    public GetDailyScrumQueryHandler(IGraphService graphService, TimeProvider timeProvider)
+    public GetDailyScrumQueryHandler(IGraphService graphService, TimeProvider timeProvider, ILogger<GetDailyScrumQueryHandler> logger)
     {
         _graphService = graphService;
         _timeProvider = timeProvider;
+        _logger = logger;
     }
 
     public async Task<DailyScrumViewModel> Handle(GetDailyScrumQuery request, CancellationToken cancellationToken)
@@ -26,6 +31,9 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
         var userSummary = await GetUserSummary(request.ClientDays);
 
         var today = _timeProvider.GetToday();
+
+        _logger.LogInformation("Getting projects for {Today}", today);
+
         var todaysProjects = await GetProjects(today);
 
         var yesterday = GetLastWorkingDay(request.LastWorkingDay);
@@ -55,6 +63,7 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
     // TODO: Consider refactoring into a common service
     private async Task<List<ProjectViewModel>> GetProjects(DateOnly date)
     {
+        // TODO: This is not returning the correct timestamps on local vs docker
         var (startOfDayUtc, endOfDayUtc) = GetTimeStamps(date);
 
         var graphTasks = await _graphService.GetTasks(startOfDayUtc, endOfDayUtc);
@@ -112,9 +121,4 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
 
     private DateOnly GetLastWorkingDay(DateOnly? lastWorkingDay) =>
         lastWorkingDay ?? _timeProvider.GetToday().AddDays(-1);
-}
-
-public class ProjectsService
-{
-
 }
