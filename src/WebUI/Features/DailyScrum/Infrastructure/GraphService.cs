@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Azure.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Microsoft.Identity.Client;
+using System.Net.Http.Headers;
 using WebUI.Common.Identity;
 using WebUI.Features.DailyScrum.Domain;
 
@@ -14,6 +17,11 @@ public interface IGraphService
 
 public class GraphService : IGraphService
 {
+    private readonly string _clientId = "2407f45c-4141-4484-8fc5-ce61327519d9";
+    private readonly string _tenantId = "ac2f7c34-b935-48e9-abdc-11e5d4fcb2b0";
+    private readonly string _redirectUri = "http://localhost:5001"; // Must match redirect URI in app registration
+    private readonly string[] _scopes = new[] { "User.Read" }; // Define scopes you need
+
     private readonly ICurrentUserService _currentUserService;
     private readonly ILogger<GraphService> _logger;
 
@@ -101,6 +109,41 @@ public class GraphService : IGraphService
         return new GraphServiceClient(credential);
     }
 
+    public async Task<GraphServiceClient> GetAuthenticatedGraphClientAsync()
+    {
+        var scopes = new[] { "User.Read" };
+
+        // Multi-tenant apps can use "common",
+        // single-tenant apps must use the tenant ID from the Azure portal
+        // var tenantId = "common";
+
+// Value from app registration
+        // var clientId = "YOUR_CLIENT_ID";
+
+// using Azure.Identity;
+        var options = new DeviceCodeCredentialOptions
+        {
+            AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
+            ClientId = _clientId,
+            TenantId = _tenantId,
+            // Callback function that receives the user prompt
+            // Prompt contains the generated device code that user must
+            // enter during the auth process in the browser
+            DeviceCodeCallback = (code, cancellation) =>
+            {
+                Console.WriteLine(code.Message);
+                return Task.FromResult(0);
+            },
+        };
+
+// https://learn.microsoft.com/dotnet/api/azure.identity.devicecodecredential
+        var deviceCodeCredential = new DeviceCodeCredential(options);
+
+        var graphClient = new GraphServiceClient(deviceCodeCredential, scopes);
+
+        return graphClient;
+    }
+
     private Domain.TaskStatus GetStatus(Microsoft.Graph.Models.TaskStatus? status)
     {
         return status switch
@@ -114,11 +157,19 @@ public class GraphService : IGraphService
 
     public async Task<int> GetInboxCount()
     {
-        var graphClient = GetGraphServiceClient();
-        var result = await graphClient.Me.MailFolders.GetAsync();
+        try
+        {
+            var graphClient = await GetAuthenticatedGraphClientAsync();
+            var result = await graphClient.Me.MailFolders.GetAsync();
 
-        var inboxCount = result?.Value?.FirstOrDefault(f => f.DisplayName == "Inbox")?.TotalItemCount;
+            var inboxCount = result?.Value?.FirstOrDefault(f => f.DisplayName == "Inbox")?.TotalItemCount;
 
-        return inboxCount ?? 0;
+            return inboxCount ?? 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting inbox count");
+            return 0;
+        }
     }
 }
