@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace RazerPageAuth.Pages;
+namespace WebUI.Pages;
 
 public class PrivacyModel : PageModel
 {

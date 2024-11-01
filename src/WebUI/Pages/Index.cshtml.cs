@@ -1,11 +1,8 @@
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
-using Microsoft.Identity.Abstractions;
 
-namespace RazerPageAuth.Pages;
+namespace WebUI.Pages;
 
 [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
 public class IndexModel : PageModel
