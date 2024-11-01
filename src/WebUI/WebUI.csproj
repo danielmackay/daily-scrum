@@ -53,6 +53,7 @@
 
     <ItemGroup>
       <Folder Include="Features\DailyScrum\Pages\" />
+      <Folder Include="Pages\DailyScrum\" />
     </ItemGroup>
 
 </Project>
