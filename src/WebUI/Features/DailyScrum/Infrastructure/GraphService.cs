@@ -17,18 +17,15 @@ public interface IGraphService
 
 public class GraphService : IGraphService
 {
-    private readonly string _clientId = "2407f45c-4141-4484-8fc5-ce61327519d9";
-    private readonly string _tenantId = "ac2f7c34-b935-48e9-abdc-11e5d4fcb2b0";
-    private readonly string _redirectUri = "http://localhost:5001"; // Must match redirect URI in app registration
-    private readonly string[] _scopes = new[] { "User.Read" }; // Define scopes you need
-
-    private readonly ICurrentUserService _currentUserService;
     private readonly ILogger<GraphService> _logger;
+    private readonly GraphServiceClient _graphServiceClient;
 
-    public GraphService(ICurrentUserService currentUserService, ILogger<GraphService> logger)
+    public GraphService(
+        ILogger<GraphService> logger,
+        GraphServiceClientFactory factory)
     {
-        _currentUserService = currentUserService;
         _logger = logger;
+        _graphServiceClient = factory.CreateWithAccessToken();
     }
 
     // public async Task<List<TodoTaskList>?> GetTodoLists()
@@ -58,10 +55,8 @@ public class GraphService : IGraphService
     {
         _logger.LogInformation("Getting tasks from {UtcStart} to {UtcEnd}", utcStart, utcEnd);
 
-        var graphClient = GetGraphServiceClient();
-
         // NOTE: SHOULD be able to use OData to expand the child tasks, but I haven't been able to get this to work
-        var lists = await graphClient.Me.Todo.Lists.GetAsync();
+        var lists = await _graphServiceClient.Me.Todo.Lists.GetAsync();
 
         //var tasks = new List<Task<TodoTaskCollectionResponse?>>();
 
@@ -69,12 +64,13 @@ public class GraphService : IGraphService
 
         foreach (var list in lists.Value)
         {
-            var task = graphClient.Me.Todo
+            var task = _graphServiceClient.Me.Todo
                 .Lists[list.Id]
                 .Tasks
                 .GetAsync(cfg =>
                 {
-                    cfg.QueryParameters.Filter = $"LastModifiedDateTime gt {utcStart.ToString("o")} and LastModifiedDateTime lt {utcEnd.ToString("o")}";
+                    cfg.QueryParameters.Filter =
+                        $"LastModifiedDateTime gt {utcStart.ToString("o")} and LastModifiedDateTime lt {utcEnd.ToString("o")}";
                 });
 
             tasks.Add(list, task);
@@ -101,48 +97,6 @@ public class GraphService : IGraphService
         return todaysTasks;
     }
 
-    private GraphServiceClient GetGraphServiceClient()
-    {
-        var accessToken = _currentUserService.AccessToken;
-        ArgumentException.ThrowIfNullOrEmpty(accessToken);
-        var credential = new JwtTokenCredential(accessToken);
-        return new GraphServiceClient(credential);
-    }
-
-    public async Task<GraphServiceClient> GetAuthenticatedGraphClientAsync()
-    {
-        var scopes = new[] { "User.Read" };
-
-        // Multi-tenant apps can use "common",
-        // single-tenant apps must use the tenant ID from the Azure portal
-        // var tenantId = "common";
-
-// Value from app registration
-        // var clientId = "YOUR_CLIENT_ID";
-
-// using Azure.Identity;
-        var options = new DeviceCodeCredentialOptions
-        {
-            AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
-            ClientId = _clientId,
-            TenantId = _tenantId,
-            // Callback function that receives the user prompt
-            // Prompt contains the generated device code that user must
-            // enter during the auth process in the browser
-            DeviceCodeCallback = (code, cancellation) =>
-            {
-                Console.WriteLine(code.Message);
-                return Task.FromResult(0);
-            },
-        };
-
-// https://learn.microsoft.com/dotnet/api/azure.identity.devicecodecredential
-        var deviceCodeCredential = new DeviceCodeCredential(options);
-
-        var graphClient = new GraphServiceClient(deviceCodeCredential, scopes);
-
-        return graphClient;
-    }
 
     private Domain.TaskStatus GetStatus(Microsoft.Graph.Models.TaskStatus? status)
     {
@@ -159,17 +113,84 @@ public class GraphService : IGraphService
     {
         try
         {
-            var graphClient = await GetAuthenticatedGraphClientAsync();
-            var result = await graphClient.Me.MailFolders.GetAsync();
+            // var graphClient = await GetAuthenticatedGraphClientAsync();
+            var result = await _graphServiceClient.Me.MailFolders.GetAsync();
 
             var inboxCount = result?.Value?.FirstOrDefault(f => f.DisplayName == "Inbox")?.TotalItemCount;
 
             return inboxCount ?? 0;
         }
+        // catch (MsalUiRequiredException ex)
+        // {
+        //     string redirectUri = "https://myapp.azurewebsites.net";
+        //     IConfidentialClientApplication app = ConfidentialClientApplicationBuilder.Create(_clientId)
+        //         .WithClientSecret(_se)
+        //         .WithRedirectUri(redirectUri )
+        //         .Build();
+        //
+        //     await application.AcquireTokenInteractive().ExecuteAsync();
+        // }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting inbox count");
             return 0;
         }
+    }
+}
+
+public class GraphServiceClientFactory
+{
+    private readonly ICurrentUserService _currentUserService;
+    private readonly ServiceProvider _serviceProvider;
+    private readonly string _clientId = "2407f45c-4141-4484-8fc5-ce61327519d9";
+    private readonly string _tenantId = "ac2f7c34-b935-48e9-abdc-11e5d4fcb2b0";
+    private readonly string _redirectUri = "http://localhost:5001"; // Must match redirect URI in app registration
+    // NOTE: these should be pulled from config
+    private readonly string[] _scopes = new[] { "User.Read" }; // Define scopes you need
+
+    public GraphServiceClientFactory(ICurrentUserService currentUserService, ServiceProvider serviceProvider)
+    {
+        _currentUserService = currentUserService;
+        _serviceProvider = serviceProvider;
+    }
+
+    public GraphServiceClient Create()
+    {
+        return _serviceProvider.GetRequiredService<GraphServiceClient>();
+    }
+
+    public GraphServiceClient CreateWithAccessToken()
+    {
+        var accessToken = _currentUserService.AccessToken;
+        ArgumentException.ThrowIfNullOrEmpty(accessToken);
+        var credential = new JwtTokenCredential(accessToken);
+        return new GraphServiceClient(credential);
+    }
+
+    public GraphServiceClient CreateWithDeviceCodeFlow()
+    {
+        var scopes = new[] { "User.Read" };
+
+        var options = new DeviceCodeCredentialOptions
+        {
+            AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
+            ClientId = _clientId,
+            TenantId = _tenantId,
+            // Callback function that receives the user prompt
+            // Prompt contains the generated device code that user must
+            // enter during the auth process in the browser
+            DeviceCodeCallback = (code, cancellation) =>
+            {
+                Console.WriteLine(code.Message);
+                return Task.FromResult(0);
+            },
+        };
+
+        // https://learn.microsoft.com/dotnet/api/azure.identity.devicecodecredential
+        var deviceCodeCredential = new DeviceCodeCredential(options);
+
+        var graphClient = new GraphServiceClient(deviceCodeCredential, scopes);
+
+        return graphClient;
     }
 }
