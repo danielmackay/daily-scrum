@@ -4,7 +4,7 @@ using Microsoft.Identity.Web;
 
 namespace WebUI.Pages;
 
-[AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
+// [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
 public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
@@ -21,8 +21,8 @@ public class IndexModel : PageModel
 
     public async Task OnGet()
     {
-        var user = await _graphServiceClient.Me.GetAsync();
-
-        ViewData["ApiResult"] = user?.DisplayName;
+        // var user = await _graphServiceClient.Me.GetAsync();
+        //
+        // ViewData["ApiResult"] = user?.DisplayName;
     }
 }

@@ -1,19 +1,29 @@
-@page
+@page "/daily-scrum"
 @model Index
 
-@{
-    Layout = null;
-}
+<h1>Daily Scrum</h1>
 
-<!DOCTYPE html>
+<p>Let's make the daily scrum great again.</p>
 
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group" style="margin-bottom: 20px">
+                <label asp-for="ClientDays" class="control-label">Days until client booking:</label>
+                <input asp-for="ClientDays" class="form-control" />
+                <span asp-validation-for="ClientDays" class="text-danger"></span>
+            </div>
 
+            <div class="form-group" style="margin-bottom: 20px">
+                <label asp-for="LastWorkingDay" class="control-label">Last Working Day:</label>
+                <input type="date" asp-for="LastWorkingDay" class="form-control" />
+                <span asp-validation-for="LastWorkingDay" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Create Email</button>
+            </div>
+        </form>
+    </div>
 </div>
-</body>
-</html>
