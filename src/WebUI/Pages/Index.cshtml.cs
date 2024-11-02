@@ -1,22 +1,19 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
+using WebUI.Features.DailyScrum.Infrastructure;
 
 namespace WebUI.Pages;
 
 // [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
 public class IndexModel : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
-
-    private readonly GraphServiceClient _graphServiceClient;
+    // private readonly GraphServiceClient _graphServiceClient;
 
     public IndexModel(
-        ILogger<IndexModel> logger,
-        GraphServiceClient graphServiceClient)
+        GraphServiceClientFactory factory)
     {
-        _logger = logger;
-        _graphServiceClient = graphServiceClient;
+        // _graphServiceClient = factory.CreateWithAccessToken();
     }
 
     public async Task OnGet()
