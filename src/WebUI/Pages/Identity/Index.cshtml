@@ -1,0 +1,25 @@
+@page
+@model WebUI.Pages.Identity.Index
+
+<h1>Identity</h1>
+
+<p>Let's make the Identity great again.</p>
+
+<form method="post" FormName="generate">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="AccessToken"></label>
+        <input asp-for="AccessToken" class="form-control"/>
+        <span asp-validation-for="AccessToken" class="text-danger"></span>
+        <span>Acquire token from <a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Microsoft Graph Explorer</a></span>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-info" role="alert">
+            @Model.Message
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Update Token</button>
+</form>
