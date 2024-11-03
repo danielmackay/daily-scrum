@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebUI.Features.Identity;
 
@@ -7,7 +8,9 @@ namespace WebUI.Pages.Identity;
 public class Index : PageModel
 {
     private readonly ISender _sender;
-    public string AccessToken { get; private set; } = string.Empty;
+
+    [BindProperty]
+    public string AccessToken { get; set; } = string.Empty;
 
     public string Message { get; private set; } = string.Empty;
 
@@ -18,7 +21,6 @@ public class Index : PageModel
 
     public void OnGet()
     {
-        
     }
 
     public async Task OnPost()
