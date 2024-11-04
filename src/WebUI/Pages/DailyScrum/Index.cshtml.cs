@@ -34,19 +34,15 @@ public class Index : PageModel
             LastWorkingDay = _timeProvider.GetToday().AddDays(-1);
     }
 
-    public async Task OnPost()
+    public IActionResult OnPost()
     {
-        // TODO: Generate email preivew
-        var query = new GetDailyScrumQuery(ClientDays, LastWorkingDay);
-        var _viewModel = await _sender.Send(query);
+        // this.RedirectToPage("DailyScrum/Preview", new { clientDays = ClientDays, lastWorkingDay = LastWorkingDay.ToString("O") });
+        // this.RedirectToPage("DailyScrum/Preview", new { clientDays = ClientDays, lastWorkingDay = LastWorkingDay.ToString("O") });
+
+        return RedirectToPage("/DailyScrum/Preview", new { ClientDays, LastWorkingDay});
 
         // TODO: Redirect to preview page
-        var url = $"/daily-scrum/preview?clientDays={ClientDays}&lastWorkingDay={LastWorkingDay.ToString("O")}";
+        // var url = $"/daily-scrum/preview?clientDays={ClientDays}&lastWorkingDay={LastWorkingDay.ToString("O")}";
 
     }
-}
-
-public class DailyScrumInputModel
-{
-
 }

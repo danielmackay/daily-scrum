@@ -28,12 +28,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Features\DailyScrum\Components\Heading.razor" />
-      <AdditionalFiles Include="Features\DailyScrum\Components\Pages\Index.razor" />
-      <AdditionalFiles Include="Features\DailyScrum\Components\Pages\Preview.razor" />
-    </ItemGroup>
-
-    <ItemGroup>
       <_ContentIncludedByDefault Remove="Features\DailyScrum\Pages\Index.razor" />
       <_ContentIncludedByDefault Remove="Features\DailyScrum\Pages\Preview.razor" />
       <_ContentIncludedByDefault Remove="Pages\Error.cshtml" />
@@ -43,6 +37,20 @@
       <_ContentIncludedByDefault Remove="Pages\Shared\_ValidationScriptsPartial.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\_ViewImports.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\_ViewStart.cshtml" />
+      <_ContentIncludedByDefault Remove="Features\DailyScrum\Components\Pages\Debug.razor" />
+      <_ContentIncludedByDefault Remove="Features\DailyScrum\Components\Pages\Index.razor" />
+      <_ContentIncludedByDefault Remove="Features\DailyScrum\Components\Pages\Preview.razor" />
+      <_ContentIncludedByDefault Remove="Features\DailyScrum\Components\Heading.razor" />
+      <_ContentIncludedByDefault Remove="Features\DailyScrum\Components\Summary.razor" />
+      <_ContentIncludedByDefault Remove="Features\Timesheet\Components\Pages\Index.razor" />
+      <_ContentIncludedByDefault Remove="Features\Timesheet\Components\Pages\Preview.razor" />
+      <_ContentIncludedByDefault Remove="Components\App.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\MainLayout.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\NavMenu.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Error.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Home.razor" />
+      <_ContentIncludedByDefault Remove="Components\Routes.razor" />
+      <_ContentIncludedByDefault Remove="Components\_Imports.razor" />
     </ItemGroup>
 
     <ItemGroup>

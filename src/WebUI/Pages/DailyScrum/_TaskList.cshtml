@@ -1,7 +1,8 @@
 ﻿@using WebUI.Common.ViewModels
+@model IEnumerable<ProjectViewModel>
 
 <ul>
-    @foreach (var project in Projects.Where(p => !p.IsSystemProject))
+    @foreach (var project in Model.Where(p => !p.IsSystemProject))
     {
         <li>@project.Name</li>
         <ul>
@@ -12,7 +13,7 @@
         </ul>
     }
 
-    @foreach (var project in Projects.Where(p => p.IsSystemProject))
+    @foreach (var project in Model.Where(p => p.IsSystemProject))
     {
         @foreach (var task in project.Tasks)
         {
@@ -21,6 +22,6 @@
     }
 </ul>
 
-@code {
-    [Parameter] public required IEnumerable<ProjectViewModel> Projects { get; set; }
-}
+@* @code { *@
+@*     [Parameter] public required IEnumerable<ProjectViewModel> Projects { get; set; } *@
+@* } *@

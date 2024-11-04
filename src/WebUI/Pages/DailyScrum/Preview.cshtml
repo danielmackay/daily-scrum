@@ -1,19 +1,48 @@
-@page
+@page "/daily-scrum/preview"
 @model WebUI.Pages.DailyScrum.Preview
 
-@{
-    Layout = null;
-}
 
-<!DOCTYPE html>
+<h1>Daily Scrum - Preview</h1>
 
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
-
+<div class="email-metadata">
+    <p>
+        <strong>Subject:</strong> @Model.ViewModel.Email.Subject
+    </p>
+    <p>
+        <strong>To:</strong> @Model.ViewModel.Email.To.Email
+    </p>
+    <p>
+        <strong>CC:</strong>
+        @foreach (var cc in Model.ViewModel.Email.Cc)
+        {
+            @(cc.Email + ",")
+        }
+    </p>
 </div>
-</body>
-</html>
+
+<div class="email-body">
+    <p>
+        <strong>Body:</strong>
+    </p>
+
+    <partial name="_Heading" model="@("Hi SSWBenchMasters,")"/>
+
+    @* <Summary ViewModel="_viewModel.UserSummary"/> *@
+    <partial name="_Summary" model="@Model.ViewModel.UserSummary"/>
+
+    <partial name="_Heading" model="@("Yesterday I worked on:")"/>
+    @* <Heading Text="Yesterday I worked on:"/> *@
+
+    @* <TaskList Projects="_viewModel.YesterdaysProjects"/> *@
+    <partial name="_TaskList" model="@Model.ViewModel.YesterdaysProjects"/>
+
+    <partial name="_Heading" model="@("Today I'm working on:")"/>
+    @* <Heading Text="Today I'm working on:"/> *@
+
+    @* <TaskList Projects="_viewModel.TodaysProjects"/> *@
+    <partial name="_TaskList" model="@Model.ViewModel.TodaysProjects"/>
+
+    <p>
+        &lt;This email was sent as per <a href="https://my.sugarlearning.com/SSW/items/8291">https://my.sugarlearning.com/SSW/items/8291</a> /&gt;
+    </p>
+</div>
