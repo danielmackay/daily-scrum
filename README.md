@@ -32,6 +32,8 @@ Using docker can be helpful to always keep the application running in a containe
 docker compose up -d
 ```
 
+NOTE: You'll need to run `docker compose build` first to update an existing container
+
 ## Usage
 
 Once the website is running you will need to generate an Access Token from Microsoft Graph API.

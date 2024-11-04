@@ -3,6 +3,8 @@
     image: webui
     ports:
       - 6001:80
+    environment:
+      - AZUREAD__CLIENTSECRET=${AZUREAD__CLIENTSECRET}
     build:
       context: .
       dockerfile: src/WebUI/Dockerfile
