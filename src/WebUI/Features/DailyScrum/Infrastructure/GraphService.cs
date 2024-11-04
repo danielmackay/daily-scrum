@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.Graph;
+﻿using Microsoft.Graph;
 using Microsoft.Graph.Models;
-using Microsoft.Identity.Client;
-using System.Net.Http.Headers;
 using WebUI.Features.DailyScrum.Domain;
+using TaskStatus = WebUI.Features.DailyScrum.Domain.TaskStatus;
 
 namespace WebUI.Features.DailyScrum.Infrastructure;
 
@@ -96,14 +94,14 @@ public class GraphService : IGraphService
     }
 
 
-    private Domain.TaskStatus GetStatus(Microsoft.Graph.Models.TaskStatus? status)
+    private TaskStatus GetStatus(Microsoft.Graph.Models.TaskStatus? status)
     {
         return status switch
         {
-            Microsoft.Graph.Models.TaskStatus.Completed => Domain.TaskStatus.Done,
-            Microsoft.Graph.Models.TaskStatus.NotStarted => Domain.TaskStatus.Todo,
-            Microsoft.Graph.Models.TaskStatus.InProgress => Domain.TaskStatus.InProgress,
-            _ => Domain.TaskStatus.Todo,
+            Microsoft.Graph.Models.TaskStatus.Completed => TaskStatus.Done,
+            Microsoft.Graph.Models.TaskStatus.NotStarted => TaskStatus.Todo,
+            Microsoft.Graph.Models.TaskStatus.InProgress => TaskStatus.InProgress,
+            _ => TaskStatus.Todo,
         };
     }
 
@@ -111,23 +109,12 @@ public class GraphService : IGraphService
     {
         try
         {
-            // var graphClient = await GetAuthenticatedGraphClientAsync();
             var result = await _graphServiceClient.Me.MailFolders.GetAsync();
 
             var inboxCount = result?.Value?.FirstOrDefault(f => f.DisplayName == "Inbox")?.TotalItemCount;
 
             return inboxCount ?? 0;
         }
-        // catch (MsalUiRequiredException ex)
-        // {
-        //     string redirectUri = "https://myapp.azurewebsites.net";
-        //     IConfidentialClientApplication app = ConfidentialClientApplicationBuilder.Create(_clientId)
-        //         .WithClientSecret(_se)
-        //         .WithRedirectUri(redirectUri )
-        //         .Build();
-        //
-        //     await application.AcquireTokenInteractive().ExecuteAsync();
-        // }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting inbox count");
