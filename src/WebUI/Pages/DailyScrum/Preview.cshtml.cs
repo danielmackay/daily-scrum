@@ -9,10 +9,10 @@ public class Preview : PageModel
 {
     private readonly ISender _sender;
 
-    [BindProperty]
+    [FromQuery]
     public int? ClientDays { get; set; }
 
-    [BindProperty]
+    [FromQuery]
     public DateOnly LastWorkingDay { get; set; }
 
     public DailyScrumViewModel ViewModel { get; set; } = null!;

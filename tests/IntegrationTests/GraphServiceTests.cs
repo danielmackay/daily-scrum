@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WebUI.Common.Identity;
 using WebUI.Common.Services;
@@ -54,9 +55,9 @@ public class GraphServiceTests
     {
         var userService = new CurrentUserService();
         userService.UpdateAccessToken(_accessToken);
-        var timeProvider = new SydneyTimeProvider();
         var logger = new Logger<GraphService>(new LoggerFactory());
-        var service = new GraphService(userService, logger);
+        var factory = new GraphServiceClientFactory(userService, new ServiceCollection().BuildServiceProvider());
+        var service = new GraphService(logger, factory);
         return service;
     }
 }

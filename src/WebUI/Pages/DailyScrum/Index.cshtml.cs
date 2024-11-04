@@ -10,7 +10,6 @@ namespace WebUI.Pages.DailyScrum;
 public class Index : PageModel
 {
     private readonly TimeProvider _timeProvider;
-    private readonly ISender _sender;
 
     // NOTE: THis needs to be a string due to the following bug with nullable fields
     // https://github.com/dotnet/aspnetcore/issues/52195
@@ -20,12 +19,9 @@ public class Index : PageModel
     [BindProperty]
     public DateOnly LastWorkingDay { get; set; }
 
-    // [SupplyParameterFromForm] private DailyScrumInputModel Model { get; set; } = new();
-
     public Index(TimeProvider timeProvider, ISender sender)
     {
         _timeProvider = timeProvider;
-        _sender = sender;
     }
 
     public void OnGet()
@@ -36,10 +32,7 @@ public class Index : PageModel
 
     public IActionResult OnPost()
     {
-        // this.RedirectToPage("DailyScrum/Preview", new { clientDays = ClientDays, lastWorkingDay = LastWorkingDay.ToString("O") });
-        // this.RedirectToPage("DailyScrum/Preview", new { clientDays = ClientDays, lastWorkingDay = LastWorkingDay.ToString("O") });
-
-        return RedirectToPage("/DailyScrum/Preview", new { ClientDays, LastWorkingDay});
+        return RedirectToPage("/DailyScrum/Preview", new { ClientDays, LastWorkingDay = LastWorkingDay.ToString("O")});
 
         // TODO: Redirect to preview page
         // var url = $"/daily-scrum/preview?clientDays={ClientDays}&lastWorkingDay={LastWorkingDay.ToString("O")}";

@@ -1,7 +1,6 @@
 @page "/daily-scrum/preview"
 @model WebUI.Pages.DailyScrum.Preview
 
-
 <h1>Daily Scrum - Preview</h1>
 
 <div class="email-metadata">
@@ -27,19 +26,14 @@
 
     <partial name="_Heading" model="@("Hi SSWBenchMasters,")"/>
 
-    @* <Summary ViewModel="_viewModel.UserSummary"/> *@
     <partial name="_Summary" model="@Model.ViewModel.UserSummary"/>
 
     <partial name="_Heading" model="@("Yesterday I worked on:")"/>
-    @* <Heading Text="Yesterday I worked on:"/> *@
 
-    @* <TaskList Projects="_viewModel.YesterdaysProjects"/> *@
     <partial name="_TaskList" model="@Model.ViewModel.YesterdaysProjects"/>
 
     <partial name="_Heading" model="@("Today I'm working on:")"/>
-    @* <Heading Text="Today I'm working on:"/> *@
 
-    @* <TaskList Projects="_viewModel.TodaysProjects"/> *@
     <partial name="_TaskList" model="@Model.ViewModel.TodaysProjects"/>
 
     <p>
