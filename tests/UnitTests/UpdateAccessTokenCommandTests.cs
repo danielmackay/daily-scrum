@@ -15,7 +15,6 @@ public class UpdateAccessTokenCommandTests
 
         sut.Handle(new UpdateAccessTokenCommand(token), CancellationToken.None);
 
-        currentUserService.FirstName.Should().Be("Daniel");
-        currentUserService.LastName.Should().Be("Mackay");
+        currentUserService.UserName.Should().Be("Daniel Mackay");
     }
 }

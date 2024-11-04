@@ -21,7 +21,7 @@ public class GraphService : IGraphService
         GraphServiceClientFactory factory)
     {
         _logger = logger;
-        _graphServiceClient = factory.CreateWithAccessToken();
+        _graphServiceClient = factory.CreateDefault();
     }
 
     // public async Task<List<TodoTaskList>?> GetTodoLists()

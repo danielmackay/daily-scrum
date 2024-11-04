@@ -8,9 +8,12 @@ public class GraphServiceClientFactory
 {
     private readonly ICurrentUserService _currentUserService;
     private readonly IServiceProvider _serviceProvider;
+
+    // TODO: Read from config
     private readonly string _clientId = "2407f45c-4141-4484-8fc5-ce61327519d9";
     private readonly string _tenantId = "ac2f7c34-b935-48e9-abdc-11e5d4fcb2b0";
     private readonly string _redirectUri = "http://localhost:5001"; // Must match redirect URI in app registration
+    private readonly string[] _scopes = new[] { "User.Read" };
 
     public GraphServiceClientFactory(ICurrentUserService currentUserService, IServiceProvider serviceProvider)
     {
@@ -18,7 +21,7 @@ public class GraphServiceClientFactory
         _serviceProvider = serviceProvider;
     }
 
-    public GraphServiceClient Create()
+    public GraphServiceClient CreateDefault()
     {
         return _serviceProvider.GetRequiredService<GraphServiceClient>();
     }
@@ -33,8 +36,6 @@ public class GraphServiceClientFactory
 
     public GraphServiceClient CreateWithDeviceCodeFlow()
     {
-        var scopes = new[] { "User.Read" };
-
         var options = new DeviceCodeCredentialOptions
         {
             AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
@@ -53,7 +54,7 @@ public class GraphServiceClientFactory
         // https://learn.microsoft.com/dotnet/api/azure.identity.devicecodecredential
         var deviceCodeCredential = new DeviceCodeCredential(options);
 
-        var graphClient = new GraphServiceClient(deviceCodeCredential, scopes);
+        var graphClient = new GraphServiceClient(deviceCodeCredential, _scopes);
 
         return graphClient;
     }

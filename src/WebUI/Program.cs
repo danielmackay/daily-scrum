@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using System.Reflection;
@@ -12,18 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 var initialScopes = builder.Configuration.GetSection("DownstreamApi:Scopes").Get<string[]>();
 
-// builder.Services
-//     .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-//     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-//     .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-//     .AddMicrosoftGraph(builder.Configuration.GetSection("DownstreamApi"))
-//     .AddInMemoryTokenCaches();
-//
-// builder.Services.AddAuthorization(options =>
-// {
-//     // By default, all incoming requests will be authorized according to the default policy.
-//     options.FallbackPolicy = options.DefaultPolicy;
-// });
+builder.Services
+    .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+    .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
+    .AddMicrosoftGraph(builder.Configuration.GetSection("DownstreamApi"))
+    .AddInMemoryTokenCaches();
+
+builder.Services.AddAuthorization(options =>
+{
+    // By default, all incoming requests will be authorized according to the default policy.
+    options.FallbackPolicy = options.DefaultPolicy;
+});
 
 builder.Services
     .AddRazorPages()
@@ -32,7 +31,8 @@ builder.Services
 // App Services
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
 builder.Services.AddMediatR();
-builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
+// builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<ICurrentUserService, OAuthCurrentUserService>();
 builder.Services.AddScoped<GraphServiceClientFactory>();
 
 var app = builder.Build();
@@ -47,7 +47,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-// app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapRazorPages()

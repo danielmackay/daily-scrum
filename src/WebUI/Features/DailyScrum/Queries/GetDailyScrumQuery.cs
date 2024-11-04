@@ -86,12 +86,11 @@ public class GetDailyScrumQueryHandler : IRequestHandler<GetDailyScrumQuery, Dai
 
     private EmailViewModel GetEmail()
     {
-        var firstName = _currentUserService.FirstName;
-        var lastName = _currentUserService.LastName;
+        var userName = _currentUserService.UserName;
 
         return new EmailViewModel
         {
-            Subject = $"{firstName} {lastName} - Daily Scrum",
+            Subject = $"{userName} - Daily Scrum",
             To = new EmailParticipantViewModel
             {
                 Name = "SSWBenchMasters",
