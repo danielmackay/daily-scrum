@@ -1,0 +1,27 @@
+﻿@using WebUI.Common.ViewModels
+@model IEnumerable<ProjectViewModel>
+
+<ul>
+    @foreach (var project in Model.Where(p => !p.IsSystemProject))
+    {
+        <li>@project.Name</li>
+        <ul>
+            @foreach (var task in project.Tasks)
+            {
+                <li>@task.Name</li>
+            }
+        </ul>
+    }
+
+    @foreach (var project in Model.Where(p => p.IsSystemProject))
+    {
+        @foreach (var task in project.Tasks)
+        {
+            <li>@task.Name</li>
+        }
+    }
+</ul>
+
+@* @code { *@
+@*     [Parameter] public required IEnumerable<ProjectViewModel> Projects { get; set; } *@
+@* } *@

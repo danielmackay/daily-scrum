@@ -1,6 +1,6 @@
 using FluentAssertions;
 using WebUI.Common.Identity;
-using WebUI.Features.Identity.Commands;
+using WebUI.Features.Identity;
 
 namespace UnitTests;
 
