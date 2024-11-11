@@ -1,0 +1,50 @@
+@page "/daily-scrum/edit-tasks"
+@using Microsoft.AspNetCore.Server.Kestrel.Core
+@model WebUI.Pages.DailyScrum.EditTasks
+
+<h1>Daily Scrum - Edit Tasks</h1>
+
+<p>The following tasks have been found. Confirm what you would like to include in your Daily Scrum</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            @{
+                int j = 0;
+                @foreach (var project in Model.YesterdaysProjects)
+                {
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <h2>@project.Name</h2>
+
+                    int i = 0;
+                    @foreach (var task in project.Tasks)
+                    {
+                        <div class="form-check">
+                            @* id=@task.Id name="@($"project.Tasks[{i++}]")" *@
+                            <input asp-for="YesterdaysProjects[j].Tasks[i].Include" class="form-check-input" type="checkbox">
+                            <label class="form-check-label" for="@task.Id">
+                                @task.Name
+                            </label>
+                        </div>
+
+                        i++;
+                    }
+
+                    @* @for (var i = 0; i < project.Tasks.Count; i++) *@
+                    @* { *@
+                    @* <div class="form-check"> *@
+                    @*     <input id=@($"project.Tasks[{i}]") name=@($"project.Tasks[{i}]") class="form-check-input" type="checkbox" checked> *@
+                    @*     <label class="form-check-label" for="@($"project.Tasks[{i}]")"> *@
+                    @*         @project.Tasks[i].Name *@
+                    @*     </label> *@
+                    @* </div> *@
+                    // }
+
+                    j++;
+                }
+            }
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
