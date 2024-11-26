@@ -2,7 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebUI.Common.ViewModels;
-using WebUI.Features.DailyScrum.Queries;
+using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
 
 namespace WebUI.Pages.DailyScrum;
 
@@ -20,7 +20,7 @@ public class EditTasks : PageModel
 
     public async Task OnGet(int? clientDays, DateOnly lastWorkingDay)
     {
-        var query = new GetDailyScrumQuery(clientDays, lastWorkingDay);
+        var query = new CreateDailyScrumCommand(clientDays, lastWorkingDay);
         var result = await _sender.Send(query);
 
         YesterdaysProjects = result.YesterdaysProjects.Select(p =>
@@ -38,6 +38,7 @@ public class EditTasks : PageModel
 
     public void OnPost()
     {
+
     }
 }
 

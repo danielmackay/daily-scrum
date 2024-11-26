@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebUI.Features.DailyScrum.Queries;
+using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
 
 namespace WebUI.Pages.DailyScrum;
 
@@ -24,7 +24,7 @@ public class Preview : PageModel
 
     public async Task OnGet()
     {
-        var query = new GetDailyScrumQuery(ClientDays, LastWorkingDay);
+        var query = new CreateDailyScrumCommand(ClientDays, LastWorkingDay);
         ViewModel = await _sender.Send(query);
     }
 }

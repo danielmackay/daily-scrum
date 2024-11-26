@@ -3,7 +3,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using System.Reflection;
 using WebUI.Common.Identity;
-using WebUI.Features.DailyScrum.Infrastructure;
+using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
 using WebUI.Host;
 
 var appAssembly = Assembly.GetExecutingAssembly();

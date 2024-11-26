@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebUI.Common.Services;
-using WebUI.Features.DailyScrum.Queries;
 
 namespace WebUI.Pages.DailyScrum;
 

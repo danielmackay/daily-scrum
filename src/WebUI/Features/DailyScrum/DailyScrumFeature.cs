@@ -1,6 +1,6 @@
 ﻿using WebUI.Common.Features;
 using WebUI.Common.Services;
-using WebUI.Features.DailyScrum.Infrastructure;
+using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
 
 namespace WebUI.Features.DailyScrum;
 

@@ -5,6 +5,7 @@ public class TaskItem
     private readonly List<string> _blockedEmojis = ["❌", "🚫", "⛔"];
 
     public TaskStatus Status { get; }
+
     public string Name { get; }
     // public string RawName { get; }
 
