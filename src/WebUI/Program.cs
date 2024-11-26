@@ -25,6 +25,8 @@ var initialScopes = builder.Configuration.GetSection("DownstreamApi:Scopes").Get
 //     options.FallbackPolicy = options.DefaultPolicy;
 // });
 
+builder.Services.AddDistributedMemoryCache();
+
 builder.Services
     .AddRazorPages()
     .AddMicrosoftIdentityUI();

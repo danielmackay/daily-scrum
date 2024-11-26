@@ -14,17 +14,20 @@ public class CreateDailyScrumCommandHandler : IRequestHandler<CreateDailyScrumCo
     private readonly IGraphService _graphService;
     private readonly TimeProvider _timeProvider;
     private readonly ICurrentUserService _currentUserService;
+    private readonly IDailyScrumRepository _dailyScrumRepository;
     private readonly ILogger<CreateDailyScrumCommandHandler> _logger;
 
     public CreateDailyScrumCommandHandler(
         IGraphService graphService,
         TimeProvider timeProvider,
         ICurrentUserService currentUserService,
+        IDailyScrumRepository dailyScrumRepository,
         ILogger<CreateDailyScrumCommandHandler> logger)
     {
         _graphService = graphService;
         _timeProvider = timeProvider;
         _currentUserService = currentUserService;
+        _dailyScrumRepository = dailyScrumRepository;
         _logger = logger;
     }
 
@@ -42,8 +45,9 @@ public class CreateDailyScrumCommandHandler : IRequestHandler<CreateDailyScrumCo
         var yesterday = GetLastWorkingDay(request.LastWorkingDay);
         var yesterdaysProjects = await GetProjects(yesterday);
 
-        // TODO: Store in session
         var dailyScrum = new Domain.DailyScrum(userSummary, yesterdaysProjects, todaysProjects, email);
+
+        _dailyScrumRepository.Save(dailyScrum);
 
         return new Success();
     }
