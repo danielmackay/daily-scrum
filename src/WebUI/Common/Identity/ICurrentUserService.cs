@@ -52,6 +52,7 @@ public class OAuthCurrentUserService : ICurrentUserService
     {
         UserId = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
         UserName = httpContextAccessor.HttpContext?.User?.FindFirstValue("Name") ?? string.Empty;
-        UserName = UserName.TrimEnd(" [SSW]");
+        // UserName = UserName.Trim(" [SSW]");
+        // UserName = UserName.Trim(' ', '[', 'S', 'S', 'W', ']');
     }
 }

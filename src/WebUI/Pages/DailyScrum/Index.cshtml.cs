@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebUI.Common.Services;
+using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
 
 namespace WebUI.Pages.DailyScrum;
 
 public class Index : PageModel
 {
     private readonly TimeProvider _timeProvider;
+    private readonly ISender _sender;
 
     [BindProperty] public int? ClientDays { get; set; }
 
@@ -17,6 +19,7 @@ public class Index : PageModel
     public Index(TimeProvider timeProvider, ISender sender)
     {
         _timeProvider = timeProvider;
+        _sender = sender;
     }
 
     public void OnGet()
@@ -24,9 +27,12 @@ public class Index : PageModel
         LastWorkingDay = _timeProvider.GetToday().AddDays(-1);
     }
 
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPost()
     {
-        return RedirectToPage("/DailyScrum/EditTasks",
-            new { ClientDays, LastWorkingDay = LastWorkingDay.ToString("O") });
+        var query = new CreateDailyScrumCommand(ClientDays, LastWorkingDay);
+        var result = await _sender.Send(query);
+
+        // TODO: Remove route values from page redirect
+        return RedirectToPage("/DailyScrum/EditTasks");
     }
 }
