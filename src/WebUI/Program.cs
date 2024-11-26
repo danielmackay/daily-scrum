@@ -36,6 +36,12 @@ builder.Services.AddMediatR();
 builder.Services.AddScoped<ICurrentUserService, OAuthCurrentUserService>();
 builder.Services.AddScoped<GraphServiceClientFactory>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set the session timeout
+    options.Cookie.HttpOnly = true; // Make the session cookie HTTP only
+    options.Cookie.IsEssential = true; // Make the session cookie essential
+});
 
 var app = builder.Build();
 
@@ -51,6 +57,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapStaticAssets();
 app.MapRazorPages()
