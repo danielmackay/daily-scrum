@@ -35,8 +35,6 @@ builder.Services
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
 builder.Services.AddMediatR();
 // builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
-builder.Services.AddScoped<ICurrentUserService, OAuthCurrentUserService>();
-builder.Services.AddScoped<GraphServiceClientFactory>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
@@ -44,6 +42,10 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true; // Make the session cookie HTTP only
     options.Cookie.IsEssential = true; // Make the session cookie essential
 });
+
+builder.Services.AddScoped<IDailyScrumRepository, SessionDailyScrumRepository>();
+builder.Services.AddScoped<GraphServiceClientFactory>();
+builder.Services.AddScoped<ICurrentUserService, OAuthCurrentUserService>();
 
 var app = builder.Build();
 

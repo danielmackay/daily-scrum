@@ -30,9 +30,9 @@ public class Index : PageModel
     public async Task<IActionResult> OnPost()
     {
         var query = new CreateDailyScrumCommand(ClientDays, LastWorkingDay);
+        // TODO: Handle error
         var result = await _sender.Send(query);
 
-        // TODO: Remove route values from page redirect
         return RedirectToPage("/DailyScrum/EditTasks");
     }
 }

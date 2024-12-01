@@ -5,6 +5,8 @@ namespace WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
 public interface IDailyScrumRepository
 {
     void Save(Domain.DailyScrum dailyScrum);
+
+    Domain.DailyScrum? Get();
 }
 
 

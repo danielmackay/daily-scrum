@@ -15,19 +15,3 @@ public class UserSummary
         TrelloBoardUrl = "https://trello.com/b/gYiilU64/daniel-mackay-ssw-backlog";
     }
 }
-
-public class DailyScrum
-{
-    public UserSummary UserSummary { get; }
-    public List<Project> YesterdaysProjects { get; }
-    public List<Project> TodaysProjects { get; }
-    public EmailSummary Email { get; }
-
-    public DailyScrum(UserSummary userSummary, IEnumerable<Project> yesterdaysProjects, IEnumerable<Project> todaysProjects, EmailSummary email)
-    {
-        UserSummary = userSummary;
-        YesterdaysProjects = yesterdaysProjects.ToList();
-        TodaysProjects = todaysProjects.ToList();
-        Email = email;
-    }
-}
