@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
 
@@ -24,13 +25,14 @@ public class SessionDailyScrumRepository : IDailyScrumRepository
 
     public void Save(Domain.DailyScrum dailyScrum)
     {
-        var dailyScrumJson = JsonSerializer.Serialize(dailyScrum);
+        // NOTE: Using newtonsoft json serializer because System.Text.Json had problems with deserializing
+        var dailyScrumJson = Newtonsoft.Json.JsonConvert.SerializeObject(dailyScrum);
         _session.SetString(SessionKey, dailyScrumJson);
     }
 
     public Domain.DailyScrum? Get()
     {
         var dailyScrumJson = _session.GetString(SessionKey);
-        return dailyScrumJson == null ? null : JsonSerializer.Deserialize<Domain.DailyScrum>(dailyScrumJson);
+        return Newtonsoft.Json.JsonConvert.DeserializeObject<Domain.DailyScrum>(dailyScrumJson);
     }
 }

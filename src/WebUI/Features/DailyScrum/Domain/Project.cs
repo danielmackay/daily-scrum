@@ -16,4 +16,9 @@ public class Project
     }
 
     private static string RemoveEmojis(string input) => input.Replace("✅", "").TrimStart();
+
+    public void RemoveTasks(IEnumerable<Guid> tasks)
+    {
+        _tasks.RemoveAll(t => tasks.Contains(t.Id));
+    }
 }

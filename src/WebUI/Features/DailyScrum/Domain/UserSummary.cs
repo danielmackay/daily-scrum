@@ -2,10 +2,10 @@ namespace WebUI.Features.DailyScrum.Domain;
 
 public class UserSummary
 {
-    public int DaysUntilNextBooking { get; }
-    public string DaysUntilNextBookingText { get; }
-    public int InboxCount { get; }
-    public string TrelloBoardUrl { get; }
+    public int DaysUntilNextBooking { get; init; }
+    public string DaysUntilNextBookingText { get; init; }
+    public int InboxCount { get; init; }
+    public string TrelloBoardUrl { get; init; }
 
     public UserSummary(int? daysUntilNextBooking, int inboxCount)
     {

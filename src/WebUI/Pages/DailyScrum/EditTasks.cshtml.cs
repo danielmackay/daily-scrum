@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebUI.Common.ViewModels;
-using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
+// using WebUI.Common.ViewModels;
 using WebUI.Features.DailyScrum.UseCases.GetDailyScrumQuery;
+using WebUI.Features.DailyScrum.UseCases.RemoveTasksCommand;
 
 namespace WebUI.Pages.DailyScrum;
 
@@ -13,6 +13,9 @@ public class EditTasks : PageModel
 
     [BindProperty]
     public List<EditProjectViewModel> YesterdaysProjects { get; set; } = [];
+
+    [BindProperty]
+    public List<EditProjectViewModel> TodaysProjects { get; set; } = [];
 
     public EditTasks(ISender sender)
     {
@@ -26,7 +29,19 @@ public class EditTasks : PageModel
 
         // TODO: Handle error
 
-        YesterdaysProjects = result.YesterdaysProjects.Select(p =>
+        YesterdaysProjects = result.Value.YesterdaysProjects.Projects.Select(p =>
+            new EditProjectViewModel
+            {
+                Name = p.Name,
+                Tasks = p.Tasks.Select(t => new EditTaskViewModel
+                {
+                    Id = Guid.NewGuid(),
+                    Include = true,
+                    Name = t.Name
+                }).ToList()
+            }).ToList();
+
+        TodaysProjects = result.Value.TodaysProjects.Projects.Select(p =>
             new EditProjectViewModel
             {
                 Name = p.Name,
@@ -39,9 +54,24 @@ public class EditTasks : PageModel
             }).ToList();
     }
 
-    public void OnPost()
+    public async Task<IActionResult> OnPost()
     {
-        // TODO: Create command to update daily scrum data
+        var yesterdaysTasksToRemove = YesterdaysProjects
+            .SelectMany(p => p.Tasks)
+            .Where(t => !t.Include)
+            .Select(t => t.Id);
+
+        var todaysTasksToRemove = TodaysProjects
+            .SelectMany(p => p.Tasks)
+            .Where(t => !t.Include)
+            .Select(t => t.Id);
+
+        var command = new RemoveTasksCommand(yesterdaysTasksToRemove, todaysTasksToRemove);
+        var result = await _sender.Send(command);
+
+        // TODO: Handle error
+
+        return RedirectToPage("/DailyScrum/Email");
     }
 }
 
