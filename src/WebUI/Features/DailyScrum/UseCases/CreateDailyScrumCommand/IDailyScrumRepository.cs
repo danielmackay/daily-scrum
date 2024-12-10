@@ -33,6 +33,9 @@ public class SessionDailyScrumRepository : IDailyScrumRepository
     public Domain.DailyScrum? Get()
     {
         var dailyScrumJson = _session.GetString(SessionKey);
+        if (string.IsNullOrWhiteSpace(dailyScrumJson))
+            return null;
+
         return Newtonsoft.Json.JsonConvert.DeserializeObject<Domain.DailyScrum>(dailyScrumJson);
     }
 }

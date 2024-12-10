@@ -59,7 +59,7 @@ public class CreateDailyScrumCommandHandler : IRequestHandler<CreateDailyScrumCo
         return userSummary;
     }
 
-    private async Task<IReadOnlyList<Project>> GetProjects(DateOnly date)
+    private async Task<ProjectList> GetProjects(DateOnly date)
     {
         // TODO: This is not returning the correct timestamps on local vs docker
         var startOfDayUtc = _timeProvider.GetStartOfDayUtc(date);
@@ -70,7 +70,7 @@ public class CreateDailyScrumCommandHandler : IRequestHandler<CreateDailyScrumCo
 
         var projects = await _graphService.GetTasks(startOfDayUtc, endOfDayUtc);
 
-        return projects;
+        return new ProjectList(projects);
     }
 
     private EmailSummary GetEmail()

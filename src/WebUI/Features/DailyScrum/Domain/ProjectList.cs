@@ -2,12 +2,13 @@ namespace WebUI.Features.DailyScrum.Domain;
 
 public class ProjectList
 {
-    private readonly List<Project> _projects;
-    public IReadOnlyList<Project> Projects => _projects.AsReadOnly();
+    private readonly List<Project> _projects = [];
+
+    public IReadOnlyList<Project> Projects => _projects;
 
     public ProjectList(IEnumerable<Project> projects)
     {
-        _projects = projects.ToList();
+        _projects.AddRange(projects);
     }
 
     public void RemoveTasks(IEnumerable<Guid> tasks)

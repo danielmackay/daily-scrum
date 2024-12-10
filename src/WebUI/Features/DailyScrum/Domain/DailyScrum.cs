@@ -8,11 +8,27 @@ public class DailyScrum
     public ProjectList TodaysProjects { get; }
     public EmailSummary Email { get; }
 
-    public DailyScrum(UserSummary userSummary, IEnumerable<Project> yesterdaysProjects, IEnumerable<Project> todaysProjects, EmailSummary email)
+    public DailyScrum(UserSummary userSummary, ProjectList yesterdaysProjects, ProjectList todaysProjects, EmailSummary email)
     {
         UserSummary = userSummary;
-        YesterdaysProjects = new ProjectList(yesterdaysProjects.ToList());
-        TodaysProjects = new ProjectList(todaysProjects.ToList());
+        YesterdaysProjects = yesterdaysProjects;
+        TodaysProjects = todaysProjects;
         Email = email;
     }
 }
+
+// public class DailyScrum2
+// {
+//     public UserSummary UserSummary { get; }
+//     public ProjectList YesterdaysProjects { get; }
+//     public ProjectList TodaysProjects { get; }
+//     public EmailSummary Email { get; }
+//
+//     public DailyScrum2(UserSummary userSummary, ProjectList yesterdaysProjects, ProjectList todaysProjects, EmailSummary email)
+//     {
+//         UserSummary = userSummary;
+//         YesterdaysProjects = yesterdaysProjects;
+//         TodaysProjects = todaysProjects;
+//         Email = email;
+//     }
+// }
