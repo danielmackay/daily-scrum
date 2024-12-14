@@ -8,12 +8,14 @@ public class TaskItem
 
     public string Name { get; }
 
+    public string DisplayName => $"{GetEmojis(Status)} {Name}";
+
     public Guid Id { get; }
 
     public TaskItem(TaskStatus status, string name, Guid? id = null)
     {
+        Name = name;
         Status = OverrideStatus(ref name, status);
-        Name = $"{GetEmojis(Status)} {name}";
         Id = id ?? Guid.NewGuid();
     }
 

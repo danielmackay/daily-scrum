@@ -7,7 +7,7 @@
         <ul>
             @foreach (var task in project.Tasks)
             {
-                <li>@task.Name</li>
+                <li>@task.DisplayName</li>
             }
         </ul>
     }
@@ -16,7 +16,7 @@
     {
         @foreach (var task in project.Tasks)
         {
-            <li>@task.Name</li>
+            <li>@task.DisplayName</li>
         }
     }
 </ul>
