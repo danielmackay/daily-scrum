@@ -12,19 +12,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 var initialScopes = builder.Configuration.GetSection("DownstreamApi:Scopes").Get<string[]>();
 
-// builder.Services
-//     .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-//     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-//     .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-//     .AddMicrosoftGraph(builder.Configuration.GetSection("DownstreamApi"))
-//     // .AddDistributedTokenCaches()
-//     .AddInMemoryTokenCaches();
-//
-// builder.Services.AddAuthorization(options =>
-// {
-//     // By default, all incoming requests will be authorized according to the default policy.
-//     options.FallbackPolicy = options.DefaultPolicy;
-// });
+builder.Services
+    .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+    .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
+    .AddMicrosoftGraph(builder.Configuration.GetSection("DownstreamApi"))
+    // TODO: Consider switching to session cache to make development easier
+    // .AddDistributedTokenCaches()
+    // .AddSessionTokenCaches();
+    .AddInMemoryTokenCaches();
+
+builder.Services.AddAuthorization(options =>
+{
+    // By default, all incoming requests will be authorized according to the default policy.
+    options.FallbackPolicy = options.DefaultPolicy;
+});
 
 builder.Services.AddDistributedMemoryCache();
 
