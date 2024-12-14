@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using WebUI.Common.Identity;
 using WebUI.Common.Services;
 using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
+using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand.Infrastructure;
 
 namespace IntegrationTests;
 

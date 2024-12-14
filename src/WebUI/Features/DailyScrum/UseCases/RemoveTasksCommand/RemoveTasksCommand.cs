@@ -22,7 +22,7 @@ public class RemoveTasksCommandHandler : IRequestHandler<RemoveTasksCommand, Err
             return Task.FromResult<ErrorOr<Success>>(Error.NotFound());
 
         dailyScrum.YesterdaysProjects.RemoveTasks(request.YesterdaysTasks);
-        dailyScrum.TodaysProjects.RemoveTasks(request.YesterdaysTasks);
+        dailyScrum.TodaysProjects.RemoveTasks(request.TodaysTasks);
 
         _dailyScrumRepository.Save(dailyScrum);
 

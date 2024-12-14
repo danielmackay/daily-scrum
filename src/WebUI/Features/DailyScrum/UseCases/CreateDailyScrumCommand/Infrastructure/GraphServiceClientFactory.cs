@@ -2,7 +2,7 @@ using Azure.Identity;
 using Microsoft.Graph;
 using WebUI.Common.Identity;
 
-namespace WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
+namespace WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand.Infrastructure;
 
 public class GraphServiceClientFactory
 {

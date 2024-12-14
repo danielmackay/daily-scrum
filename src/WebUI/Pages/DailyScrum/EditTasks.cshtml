@@ -30,6 +30,28 @@
                 }
             }
 
+            @for (int i = 0; i < Model.TodaysProjects.Count; i++)
+            {
+                var project = Model.TodaysProjects[i];
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <h2>@project.Name</h2>
+
+                <input type="hidden" asp-for="TodaysProjects[i].Name">
+
+                @for (int j = 0; j < Model.TodaysProjects[i].Tasks.Count; j++)
+                {
+                    var task = Model.TodaysProjects[i].Tasks[j];
+                    <div class="form-check">
+                        <input type="hidden" asp-for="TodaysProjects[i].Tasks[j].Id">
+                        <input type="hidden" asp-for="TodaysProjects[i].Tasks[j].Name">
+                        <input asp-for="TodaysProjects[i].Tasks[j].Include" class="form-check-input">
+                        <label class="form-check-label" asp-for="TodaysProjects[i].Tasks[j].Include">
+                            @task.Name
+                        </label>
+                    </div>
+                }
+            }
+
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>

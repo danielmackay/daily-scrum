@@ -35,7 +35,7 @@ public class EditTasks : PageModel
                 Name = p.Name,
                 Tasks = p.Tasks.Select(t => new EditTaskViewModel
                 {
-                    Id = Guid.NewGuid(),
+                    Id = t.Id,
                     Include = true,
                     Name = t.Name
                 }).ToList()
@@ -47,7 +47,7 @@ public class EditTasks : PageModel
                 Name = p.Name,
                 Tasks = p.Tasks.Select(t => new EditTaskViewModel
                 {
-                    Id = Guid.NewGuid(),
+                    Id = t.Id,
                     Include = true,
                     Name = t.Name
                 }).ToList()
@@ -59,12 +59,14 @@ public class EditTasks : PageModel
         var yesterdaysTasksToRemove = YesterdaysProjects
             .SelectMany(p => p.Tasks)
             .Where(t => !t.Include)
-            .Select(t => t.Id);
+            .Select(t => t.Id)
+            .ToList();
 
         var todaysTasksToRemove = TodaysProjects
             .SelectMany(p => p.Tasks)
             .Where(t => !t.Include)
-            .Select(t => t.Id);
+            .Select(t => t.Id)
+            .ToList();
 
         var command = new RemoveTasksCommand(yesterdaysTasksToRemove, todaysTasksToRemove);
         var result = await _sender.Send(command);
