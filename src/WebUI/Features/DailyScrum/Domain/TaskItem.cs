@@ -2,20 +2,33 @@ namespace WebUI.Features.DailyScrum.Domain;
 
 public class TaskItem
 {
-    private readonly List<string> _blockedEmojis = ["❌", "🚫", "⛔"];
+    private static readonly List<string> _blockedEmojis = ["❌", "🚫", "⛔"];
 
     public TaskStatus Status { get; }
-    public string Name { get; }
-    // public string RawName { get; }
 
-    public TaskItem(TaskStatus status, string name)
+    public string Name { get; }
+
+    public string DisplayName => $"{GetEmojis(Status)} {Name}";
+
+    public Guid Id { get; }
+
+    public TaskItem(TaskStatus status, string name, Guid? id = null)
     {
-        // RawName = name;
+        Name = name;
         Status = OverrideStatus(ref name, status);
-        Name = $"{GetEmojis(Status)} {name}";
+        Id = id ?? Guid.NewGuid();
     }
 
-    private TaskStatus OverrideStatus(ref string name, TaskStatus status)
+    // public static TaskItem Create(TaskStatus status, string name)
+    // {
+    //     var task = new TaskItem();
+    //     task.Status = OverrideStatus(ref name, status);
+    //     task.Name = $"{task.GetEmojis(task.Status)} {name}";
+    //     task.Id = Guid.NewGuid();
+    //     return task;
+    // }
+
+    private static TaskStatus OverrideStatus(ref string name, TaskStatus status)
     {
         foreach (var emoji in _blockedEmojis)
         {
@@ -30,12 +43,12 @@ public class TaskItem
     }
 
 
-    private string GetEmojis(Features.DailyScrum.Domain.TaskStatus status)
+    private string GetEmojis(TaskStatus status)
     {
         return status switch
         {
-            Domain.TaskStatus.Done => "✅",
-            Domain.TaskStatus.Blocked => "❌",
+            TaskStatus.Done => "✅",
+            TaskStatus.Blocked => "❌",
             _ => "⌛"
         };
     }

@@ -1,5 +1,4 @@
-﻿@using WebUI.Common.ViewModels
-@model IEnumerable<ProjectViewModel>
+﻿@model IEnumerable<WebUI.Features.DailyScrum.Domain.Project>
 
 <ul>
     @foreach (var project in Model.Where(p => !p.IsSystemProject))
@@ -8,7 +7,7 @@
         <ul>
             @foreach (var task in project.Tasks)
             {
-                <li>@task.Name</li>
+                <li>@task.DisplayName</li>
             }
         </ul>
     }
@@ -17,11 +16,7 @@
     {
         @foreach (var task in project.Tasks)
         {
-            <li>@task.Name</li>
+            <li>@task.DisplayName</li>
         }
     }
 </ul>
-
-@* @code { *@
-@*     [Parameter] public required IEnumerable<ProjectViewModel> Projects { get; set; } *@
-@* } *@

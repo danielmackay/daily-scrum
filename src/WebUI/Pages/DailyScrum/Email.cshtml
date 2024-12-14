@@ -1,7 +1,7 @@
-@page "/daily-scrum/preview"
-@model WebUI.Pages.DailyScrum.Preview
+@page "/daily-scrum/email"
+@model WebUI.Pages.DailyScrum.Email
 
-<h1>Daily Scrum - Preview</h1>
+<h1>Daily Scrum - Email</h1>
 
 <div class="email-metadata">
     <p>
@@ -30,11 +30,11 @@
 
     <partial name="_Heading" model="@("Yesterday I worked on:")"/>
 
-    <partial name="_TaskList" model="@Model.ViewModel.YesterdaysProjects"/>
+    <partial name="_TaskList" model="@Model.ViewModel.YesterdaysProjects.Projects"/>
 
     <partial name="_Heading" model="@("Today I'm working on:")"/>
 
-    <partial name="_TaskList" model="@Model.ViewModel.TodaysProjects"/>
+    <partial name="_TaskList" model="@Model.ViewModel.TodaysProjects.Projects"/>
 
     <p>
         &lt;This email was sent as per <a href="https://my.sugarlearning.com/SSW/items/8291">https://my.sugarlearning.com/SSW/items/8291</a> /&gt;
