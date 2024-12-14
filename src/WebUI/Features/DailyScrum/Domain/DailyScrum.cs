@@ -16,19 +16,3 @@ public class DailyScrum
         Email = email;
     }
 }
-
-// public class DailyScrum2
-// {
-//     public UserSummary UserSummary { get; }
-//     public ProjectList YesterdaysProjects { get; }
-//     public ProjectList TodaysProjects { get; }
-//     public EmailSummary Email { get; }
-//
-//     public DailyScrum2(UserSummary userSummary, ProjectList yesterdaysProjects, ProjectList todaysProjects, EmailSummary email)
-//     {
-//         UserSummary = userSummary;
-//         YesterdaysProjects = yesterdaysProjects;
-//         TodaysProjects = todaysProjects;
-//         Email = email;
-//     }
-// }

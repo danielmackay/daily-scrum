@@ -24,29 +24,6 @@ public class GraphService : IGraphService
         _graphServiceClient = factory.CreateDefault();
     }
 
-    // public async Task<List<TodoTaskList>?> GetTodoLists()
-    // {
-    //     var graphClient = GetGraphServiceClient();
-    //
-    //     // get the user's todo items
-    //     var todoItems = await graphClient.Me.Todo.Lists.GetAsync();
-    //
-    //     return todoItems?.Value;
-    // }
-    //
-    // public async Task<List<TodoTask>?> GetTodoItems()
-    // {
-    //     var graphClient = GetGraphServiceClient();
-    //
-    //     // get the user's todo items
-    //     var todoItems = await graphClient.Me.Todo
-    //         .Lists[
-    //             "AAMkADc2YTU0YjZhLWQ5YjMtNGEyMS04MjBhLTZiMmE5NTYyMGIzYQAuAAAAAACP6decNu2DQYGmhrqvh_OSAQCUGIMeUnEkQY4T_KIyV7H1AADdl5LEAAA="]
-    //         .Tasks
-    //         .GetAsync();
-    //     return todoItems?.Value;
-    // }
-
     public async Task<List<Project>> GetTasks(DateTime utcStart, DateTime utcEnd)
     {
         _logger.LogInformation("Getting tasks from {UtcStart} to {UtcEnd}", utcStart, utcEnd);

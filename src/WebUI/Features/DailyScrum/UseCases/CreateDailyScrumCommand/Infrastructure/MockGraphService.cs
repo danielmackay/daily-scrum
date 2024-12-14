@@ -15,18 +15,18 @@ public class MockGraphService : IGraphService
                 new TaskItem(TaskStatus.InProgress, "Task B"),
                 new TaskItem(TaskStatus.Todo, "Task C"),
             }),
-            // new Project("Project 2", false, new List<TaskItem>
-            // {
-            //     new TaskItem(TaskStatus.Done, "Task A"),
-            //     new TaskItem(TaskStatus.InProgress, "Task B"),
-            //     new TaskItem(TaskStatus.Todo, "Task C"),
-            // }),
-            // new Project("Project 3", false, new List<TaskItem>
-            // {
-            //     new TaskItem(TaskStatus.Done, "Task A"),
-            //     new TaskItem(TaskStatus.InProgress, "Task B"),
-            //     new TaskItem(TaskStatus.Todo, "Task C"),
-            // }),
+            new Project("Project 2", false, new List<TaskItem>
+            {
+                new TaskItem(TaskStatus.Done, "Task A"),
+                new TaskItem(TaskStatus.InProgress, "Task B"),
+                new TaskItem(TaskStatus.Todo, "Task C"),
+            }),
+            new Project("Project 3", false, new List<TaskItem>
+            {
+                new TaskItem(TaskStatus.Done, "Task A"),
+                new TaskItem(TaskStatus.InProgress, "Task B"),
+                new TaskItem(TaskStatus.Todo, "Task C"),
+            }),
         };
 
         return Task.FromResult(projects);
