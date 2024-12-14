@@ -51,9 +51,9 @@ Once the website is running you will need to generate an Access Token from Micro
 
 ## Tech Stack
 
-- .NET 8
+- .NET 9
 - ASP.NET Core
-- Blazor Static SSR
+- Razor Pages
 - VSA
 - Boostrap
 - Docker
