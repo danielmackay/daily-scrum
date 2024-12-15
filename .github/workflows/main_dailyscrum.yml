@@ -64,3 +64,4 @@ jobs:
           app-name: 'dailyscrum'
           slot-name: 'Production'
           package: .
+          clean: true
