@@ -53,10 +53,7 @@ builder.Services.AddScoped<ICurrentUserService, OAuthCurrentUserService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-}
+app.UseExceptionHandler("/Error", createScopeForErrors: true);
 
 // app.UseHttpsRedirection();
 
