@@ -15,6 +15,7 @@ https://youtu.be/ZFV-UH5eZ7M
 - Integration with Microsoft Todo via Graph API
 - Generation of Daily Scrum emails
 - Generation of Timesheet notes
+- **MCP Server** - Model Context Protocol server with example tools (see [src/Mcp/README.md](src/Mcp/README.md))
 
 ## 🎉 Getting Started
 

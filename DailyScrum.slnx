@@ -8,6 +8,7 @@
   <Folder Name="/src/">
     <Project Path="src\Domain\Domain.csproj" Type="Classic C#" />
     <Project Path="src\Infrastructure\Infrastructure.csproj" Type="Classic C#" />
+    <Project Path="src\Mcp\Mcp.csproj" Type="Classic C#" />
     <Project Path="src\WebUI\WebUI.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/tests/">
