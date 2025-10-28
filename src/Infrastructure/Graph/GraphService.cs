@@ -1,9 +1,10 @@
-﻿using Domain;
+using Domain;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Microsoft.Extensions.Logging;
 using TaskStatus = Domain.TaskStatus;
 
-namespace WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand.Infrastructure;
+namespace Infrastructure.Graph;
 
 public interface IGraphService
 {

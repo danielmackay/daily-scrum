@@ -1,5 +1,5 @@
-﻿using MediatR.Pipeline;
-using WebUI.Common.Identity;
+﻿using Infrastructure.Identity;
+using MediatR.Pipeline;
 
 namespace WebUI.Common.Behaviors;
 

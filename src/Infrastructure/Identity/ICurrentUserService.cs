@@ -1,7 +1,8 @@
-﻿using Microsoft.Graph.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Graph.Models;
 using System.Security.Claims;
 
-namespace WebUI.Common.Identity;
+namespace Infrastructure.Identity;
 
 public interface ICurrentUserService
 {
@@ -50,8 +51,8 @@ public class OAuthCurrentUserService : ICurrentUserService
 
     public OAuthCurrentUserService(IHttpContextAccessor httpContextAccessor)
     {
-        UserId = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
-        UserName = httpContextAccessor.HttpContext?.User?.FindFirstValue("Name") ?? string.Empty;
+        UserId = httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        UserName = httpContextAccessor.HttpContext?.User?.FindFirst("Name")?.Value ?? string.Empty;
         // UserName = UserName.Trim(" [SSW]");
         // UserName = UserName.Trim(' ', '[', 'S', 'S', 'W', ']');
     }

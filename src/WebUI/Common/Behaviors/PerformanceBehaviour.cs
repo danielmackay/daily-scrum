@@ -1,6 +1,6 @@
-﻿using MediatR;
+﻿using Infrastructure.Identity;
+using MediatR;
 using System.Diagnostics;
-using WebUI.Common.Identity;
 
 namespace WebUI.Common.Behaviors;
 

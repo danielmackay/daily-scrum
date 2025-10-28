@@ -1,9 +1,9 @@
 ﻿using Domain;
 using ErrorOr;
+using Infrastructure.Graph;
+using Infrastructure.Identity;
 using MediatR;
-using WebUI.Common.Identity;
 using WebUI.Common.Services;
-using WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand.Infrastructure;
 
 namespace WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand;
 

@@ -1,6 +1,6 @@
+using Infrastructure.Identity;
 using MediatR;
 using System.IdentityModel.Tokens.Jwt;
-using WebUI.Common.Identity;
 
 namespace WebUI.Features.Identity;
 

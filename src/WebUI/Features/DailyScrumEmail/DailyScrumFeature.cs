@@ -1,6 +1,6 @@
-﻿using WebUI.Common.Features;
+﻿using Infrastructure.Graph;
+using WebUI.Common.Features;
 using WebUI.Common.Services;
-using WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand.Infrastructure;
 
 namespace WebUI.Features.DailyScrumEmail;
 

@@ -1,7 +1,7 @@
-﻿using Domain;
+using Domain;
 using TaskStatus = Domain.TaskStatus;
 
-namespace WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand.Infrastructure;
+namespace Infrastructure.Graph;
 
 public class MockGraphService : IGraphService
 {

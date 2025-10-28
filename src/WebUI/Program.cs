@@ -1,10 +1,10 @@
+using Infrastructure.Graph;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using System.Reflection;
-using WebUI.Common.Identity;
 using WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand;
-using WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand.Infrastructure;
 using WebUI.Host;
 
 var appAssembly = Assembly.GetExecutingAssembly();

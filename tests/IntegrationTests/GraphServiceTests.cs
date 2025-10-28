@@ -1,10 +1,10 @@
 using FluentAssertions;
+using Infrastructure.Graph;
+using Infrastructure.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebUI.Common.Identity;
 using WebUI.Common.Services;
-using WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand.Infrastructure;
 
 namespace IntegrationTests;
 
