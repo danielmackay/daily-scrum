@@ -1,4 +1,4 @@
-namespace WebUI.Features.DailyScrum.Domain;
+namespace Domain;
 
 // TODO: Should this be a view model?
 public class DailyScrum

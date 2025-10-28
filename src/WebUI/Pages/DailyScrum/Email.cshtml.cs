@@ -1,3 +1,4 @@
+using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebUI.Features.DailyScrum.UseCases.GetDailyScrumQuery;
@@ -7,7 +8,7 @@ namespace WebUI.Pages.DailyScrum;
 public class Email : PageModel
 {
     private readonly ISender _sender;
-    public Features.DailyScrum.Domain.DailyScrum ViewModel { get; set; } = null!;
+    public Domain.DailyScrum ViewModel { get; set; } = null!;
 
     public Email(ISender sender)
     {

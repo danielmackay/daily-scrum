@@ -1,4 +1,4 @@
-﻿namespace WebUI.Features.DailyScrum.Domain;
+namespace Domain;
 
 public class Project
 {

@@ -1,7 +1,7 @@
-﻿using Microsoft.Graph;
+﻿using Domain;
+using Microsoft.Graph;
 using Microsoft.Graph.Models;
-using WebUI.Features.DailyScrum.Domain;
-using TaskStatus = WebUI.Features.DailyScrum.Domain.TaskStatus;
+using TaskStatus = Domain.TaskStatus;
 
 namespace WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand.Infrastructure;
 

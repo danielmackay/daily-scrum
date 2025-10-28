@@ -1,5 +1,5 @@
+using Domain;
 using FluentAssertions;
-using WebUI.Features.DailyScrum.Domain;
 
 namespace UnitTests;
 
@@ -19,12 +19,12 @@ public class DailyScrumTests
         result.Should().NotBeNull();
     }
 
-    private DailyScrum CreateDailyScrum()
+    private Domain.DailyScrum CreateDailyScrum()
     {
         var userSummary = new UserSummary(1, 2);
         var yesterday = new ProjectList([]);
         var today = new ProjectList([]);
         var emailSummary = new EmailSummary("foo");
-        return new DailyScrum(userSummary, yesterday, today, emailSummary);
+        return new Domain.DailyScrum(userSummary, yesterday, today, emailSummary);
     }
 }

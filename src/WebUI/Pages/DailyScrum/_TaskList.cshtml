@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebUI.Features.DailyScrum.Domain.Project>
+﻿@model IEnumerable<Domain.Project>
 
 <ul>
     @foreach (var project in Model.Where(p => !p.IsSystemProject))

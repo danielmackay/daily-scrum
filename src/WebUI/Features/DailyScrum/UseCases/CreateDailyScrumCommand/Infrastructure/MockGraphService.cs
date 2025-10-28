@@ -1,5 +1,5 @@
-﻿using WebUI.Features.DailyScrum.Domain;
-using TaskStatus = WebUI.Features.DailyScrum.Domain.TaskStatus;
+﻿using Domain;
+using TaskStatus = Domain.TaskStatus;
 
 namespace WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand.Infrastructure;
 
