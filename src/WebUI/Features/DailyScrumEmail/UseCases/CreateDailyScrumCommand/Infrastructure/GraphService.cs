@@ -3,7 +3,7 @@ using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using TaskStatus = Domain.TaskStatus;
 
-namespace WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand.Infrastructure;
+namespace WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand.Infrastructure;
 
 public interface IGraphService
 {

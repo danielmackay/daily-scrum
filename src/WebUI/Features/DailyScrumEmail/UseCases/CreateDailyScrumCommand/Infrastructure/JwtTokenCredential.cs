@@ -1,6 +1,6 @@
 using Azure.Core;
 
-namespace WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand.Infrastructure;
+namespace WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand.Infrastructure;
 
 internal class JwtTokenCredential : TokenCredential
 {

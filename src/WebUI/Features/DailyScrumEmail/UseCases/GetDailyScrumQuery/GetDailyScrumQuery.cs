@@ -1,8 +1,8 @@
-using MediatR;
-using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
 using ErrorOr;
+using MediatR;
+using WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand;
 
-namespace WebUI.Features.DailyScrum.UseCases.GetDailyScrumQuery;
+namespace WebUI.Features.DailyScrumEmail.UseCases.GetDailyScrumQuery;
 
 public record GetDailyScrumQuery : IRequest<ErrorOr<Domain.DailyScrum>>;
 

@@ -1,9 +1,8 @@
 ﻿using WebUI.Common.Features;
 using WebUI.Common.Services;
-using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
-using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand.Infrastructure;
+using WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand.Infrastructure;
 
-namespace WebUI.Features.DailyScrum;
+namespace WebUI.Features.DailyScrumEmail;
 
 public sealed class DailyScrumFeature : IFeature
 {

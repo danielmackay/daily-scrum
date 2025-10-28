@@ -1,7 +1,7 @@
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebUI.Features.DailyScrum.UseCases.GetDailyScrumQuery;
+using WebUI.Features.DailyScrumEmail.UseCases.GetDailyScrumQuery;
 
 namespace WebUI.Pages.DailyScrum;
 

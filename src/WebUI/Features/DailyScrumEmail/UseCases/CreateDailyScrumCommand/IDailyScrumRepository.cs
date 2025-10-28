@@ -1,7 +1,4 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
+namespace WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand;
 
 public interface IDailyScrumRepository
 {

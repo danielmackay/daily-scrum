@@ -3,9 +3,9 @@ using ErrorOr;
 using MediatR;
 using WebUI.Common.Identity;
 using WebUI.Common.Services;
-using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand.Infrastructure;
+using WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand.Infrastructure;
 
-namespace WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
+namespace WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand;
 
 public record CreateDailyScrumCommand(int? ClientDays, DateOnly? LastWorkingDay)
     : IRequest<ErrorOr<Success>>;

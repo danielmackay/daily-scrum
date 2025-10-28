@@ -1,8 +1,8 @@
 using ErrorOr;
 using MediatR;
-using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
+using WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand;
 
-namespace WebUI.Features.DailyScrum.UseCases.RemoveTasksCommand;
+namespace WebUI.Features.DailyScrumEmail.UseCases.RemoveTasksCommand;
 
 public record RemoveTasksCommand(IEnumerable<Guid> YesterdaysTasks, IEnumerable<Guid> TodaysTasks) : IRequest<ErrorOr<Success>>;
 

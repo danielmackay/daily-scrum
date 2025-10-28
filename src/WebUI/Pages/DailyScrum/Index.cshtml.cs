@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebUI.Common.Services;
-using WebUI.Features.DailyScrum.UseCases.CreateDailyScrumCommand;
+using WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand;
 
 namespace WebUI.Pages.DailyScrum;
 

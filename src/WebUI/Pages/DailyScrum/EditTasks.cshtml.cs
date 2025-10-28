@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WebUI.Features.DailyScrumEmail.UseCases.GetDailyScrumQuery;
+using WebUI.Features.DailyScrumEmail.UseCases.RemoveTasksCommand;
 // using WebUI.Common.ViewModels;
-using WebUI.Features.DailyScrum.UseCases.GetDailyScrumQuery;
-using WebUI.Features.DailyScrum.UseCases.RemoveTasksCommand;
 
 namespace WebUI.Pages.DailyScrum;
 
