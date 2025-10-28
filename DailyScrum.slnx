@@ -1,0 +1,15 @@
+﻿<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src\WebUI\WebUI.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests\IntegrationTests\IntegrationTests.csproj" Type="Classic C#" />
+    <Project Path="tests\UnitTests\UnitTests.csproj" Type="Classic C#" />
+  </Folder>
+</Solution>
