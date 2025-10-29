@@ -22,7 +22,7 @@ public class GraphService : IGraphService
         GraphServiceClientFactory factory)
     {
         _logger = logger;
-        _graphServiceClient = factory.CreateDefault();
+        _graphServiceClient = factory.CreateWithAccessToken();
     }
 
     public async Task<List<Project>> GetTasks(DateTime utcStart, DateTime utcEnd)
@@ -50,7 +50,7 @@ public class GraphService : IGraphService
             tasks.Add(list, task);
         }
 
-        var result = await Task.WhenAll(tasks.Values);
+        _ = await Task.WhenAll(tasks.Values);
 
         var todaysTasks = tasks
             .Select(kvp =>
