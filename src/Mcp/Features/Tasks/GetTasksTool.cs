@@ -25,12 +25,17 @@ public class GetTasksTool
 
     [McpServerTool, Description("Get the list of tasks grouped by day and project/list")]
     public async Task<string> GetTasks(
-        [Description("Access token for authentication")] string accessToken,
         [Description("Start date in ISO 8601 format (e.g., 2025-10-29T00:00:00Z)")] DateTime utcStart,
         [Description("End date in ISO 8601 format (e.g., 2025-10-29T23:59:59Z)")] DateTime utcEnd)
     {
-        // Update the current user service with the access token
-        _currentUserService.UpdateAccessToken(accessToken);
+        // Check if access token is set
+        if (string.IsNullOrEmpty(_currentUserService.AccessToken))
+        {
+            return JsonSerializer.Serialize(new
+            {
+                error = "Access token not set. Please use the SetAccessToken tool to set your access token first."
+            });
+        }
 
         // Create a new GraphService using the GraphServiceClientFactory
         var graphService = new GraphService(_logger, _graphServiceClientFactory);
