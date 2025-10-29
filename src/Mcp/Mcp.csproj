@@ -11,4 +11,9 @@
         <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.4.0-preview.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
 </Project>
