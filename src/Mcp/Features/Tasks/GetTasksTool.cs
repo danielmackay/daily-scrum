@@ -40,10 +40,11 @@ public class GetTasksTool
 
         if (string.IsNullOrEmpty(accessToken))
         {
-            return JsonSerializer.Serialize(new
+            var errorResponse = new GetTasksErrorResponse
             {
-                error = "Access token not set. Please set the MSTODO__ACCESSTOKEN environment variable."
-            });
+                Error = "Access token not set. Please set the MSTODO__ACCESSTOKEN environment variable."
+            };
+            return JsonSerializer.Serialize(errorResponse);
         }
 
         // Update the current user service with the token if it came from options
@@ -52,34 +53,30 @@ public class GetTasksTool
         // Create a new GraphService using the GraphServiceClientFactory
         var graphService = new GraphService(_logger, _graphServiceClientFactory);
 
-        var projects = await graphService.GetTasks(utcStart, utcEnd);
+        var tasksByDay = await graphService.GetTasksByDay(utcStart, utcEnd);
 
-        // Group tasks by day and project
-        var result = new
-        {
-            startDate = utcStart,
-            endDate = utcEnd,
-            tasksByDay = new[]
-            {
-                new
-                {
-                    date = utcStart.Date,
-                    projects = projects.Select(p => new
-                    {
-                        name = p.Name,
-                        isSystemProject = p.IsSystemProject,
-                        tasks = p.Tasks.Select(t => new
-                        {
-                            id = t.Id,
-                            name = t.Name,
-                            displayName = t.DisplayName,
-                            status = t.Status.ToString()
-                        })
-                    })
-                }
-            }
-        };
+        // var result = new GetTasksResponse
+        // {
+        //     StartDate = utcStart,
+        //     EndDate = utcEnd,
+        //     TasksByDay = tasksByDay.Select(tbd => new Mcp.Features.Tasks.TasksByDay
+        //     {
+        //         Date = tbd.Date,
+        //         Projects = tbd.Projects.Select(p => new ProjectTasks
+        //         {
+        //             Name = p.Name,
+        //             IsSystemProject = p.IsSystemProject,
+        //             Tasks = p.Tasks.Select(t => new TaskDetails
+        //             {
+        //                 Id = t.Id,
+        //                 Name = t.Name,
+        //                 DisplayName = t.DisplayName,
+        //                 Status = t.Status.ToString()
+        //             }).ToList()
+        //         }).ToList()
+        //     }).ToList()
+        // };
 
-        return JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+        return JsonSerializer.Serialize(tasksByDay, new JsonSerializerOptions { WriteIndented = true });
     }
 }

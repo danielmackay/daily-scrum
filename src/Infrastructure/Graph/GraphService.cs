@@ -9,6 +9,7 @@ namespace Infrastructure.Graph;
 public interface IGraphService
 {
     Task<List<Project>> GetTasks(DateTime utcStart, DateTime utcEnd);
+    Task<List<TasksByDay>> GetTasksByDay(DateTime utcStart, DateTime utcEnd);
     Task<int> GetInboxCount();
 }
 
@@ -69,6 +70,75 @@ public class GraphService : IGraphService
             .ToList();
 
         return todaysTasks;
+    }
+
+    public async Task<List<TasksByDay>> GetTasksByDay(DateTime utcStart, DateTime utcEnd)
+    {
+        _logger.LogInformation("Getting tasks grouped by day from {UtcStart} to {UtcEnd}", utcStart, utcEnd);
+
+        var lists = await _graphServiceClient.Me.Todo.Lists.GetAsync();
+
+        var tasks = new Dictionary<TodoTaskList, Task<TodoTaskCollectionResponse?>>();
+
+        foreach (var list in lists.Value)
+        {
+            var task = _graphServiceClient.Me.Todo
+                .Lists[list.Id]
+                .Tasks
+                .GetAsync(cfg =>
+                {
+                    cfg.QueryParameters.Filter =
+                        $"LastModifiedDateTime gt {utcStart.ToString("o")} and LastModifiedDateTime lt {utcEnd.ToString("o")}";
+                });
+
+            tasks.Add(list, task);
+        }
+
+        _ = await Task.WhenAll(tasks.Values);
+
+        // Group all tasks by day
+        var tasksByDay = new Dictionary<DateTime, List<Project>>();
+
+        foreach (var kvp in tasks)
+        {
+            var listName = kvp.Key.DisplayName;
+            var isSystemList = kvp.Key.WellknownListName != WellknownListName.None;
+            var todoTasks = kvp.Value.Result.Value;
+
+            // Group tasks from this list by their last modified date
+            var tasksGroupedByDay = todoTasks
+                .GroupBy(t => t.LastModifiedDateTime?.DateTime.Date ?? DateTime.UtcNow.Date)
+                .ToList();
+
+            foreach (var dayGroup in tasksGroupedByDay)
+            {
+                var date = dayGroup.Key;
+                
+                var taskItems = dayGroup
+                    .GroupBy(t => t.Title)
+                    .Select(g => g.First())
+                    .Select(t => new TaskItem(GetStatus(t.Status), t.Title))
+                    .ToList();
+
+                if (taskItems.Count == 0)
+                    continue;
+
+                if (!tasksByDay.ContainsKey(date))
+                {
+                    tasksByDay[date] = new List<Project>();
+                }
+
+                tasksByDay[date].Add(new Project(listName, isSystemList, taskItems));
+            }
+        }
+
+        // Convert to list of TasksByDay and sort by date
+        var result = tasksByDay
+            .Select(kvp => new TasksByDay(kvp.Key, kvp.Value))
+            .OrderBy(t => t.Date)
+            .ToList();
+
+        return result;
     }
 
 
