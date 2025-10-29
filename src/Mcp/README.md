@@ -1,6 +1,8 @@
-# MCP Server - Hello World
+# Daily Scrum MCP Server
 
-This project implements a Model Context Protocol (MCP) server with a basic "Hello World" function using ASP.NET Core.
+This project implements a Model Context Protocol (MCP) server that provides access to Microsoft To-Do tasks for daily scrum reporting.
+
+The server uses STDIO transport to communicate with MCP clients like Claude Desktop.
 
 ## What is MCP?
 
@@ -15,45 +17,75 @@ For more information about MCP:
 
 This MCP server provides:
 
-- **SayHello** - A simple greeting tool that says hello to a specified name
+- **GetTasks** - Retrieves Microsoft To-Do tasks grouped by day and project/list
+- **SetAccessToken** - Sets the Microsoft Graph access token for authentication (optional if using environment variable)
 
 ## Getting Started
 
 ### Prerequisites
 
 - .NET 9.0 SDK or later
+- Microsoft Graph API access token (see Configuration section below)
+
+### Getting a Microsoft Graph Access Token
+
+1. Navigate to [Microsoft Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer)
+2. Sign in with your Microsoft account
+3. Grant the required permissions (Tasks.Read, Tasks.ReadWrite)
+4. Copy your access token from the Graph Explorer
 
 ### Running the Server
+
+The server is typically started automatically by the MCP client (e.g., Claude Desktop). You don't need to run it manually.
+
+To test the server manually:
 
 1. Navigate to the Mcp project directory:
    ```bash
    cd src/Mcp
    ```
 
-2. Run the server:
+2. Set your access token as an environment variable:
+   ```bash
+   # Linux/macOS
+   export MSTODO__ACCESSTOKEN="your-access-token-here"
+   
+   # Windows PowerShell
+   $env:MSTODO__ACCESSTOKEN="your-access-token-here"
+   ```
+
+3. Run the server:
    ```bash
    dotnet run
    ```
 
-The server will start and listen for MCP connections on the configured ports (check console output for the actual URLs, typically `http://localhost:5000` or `https://localhost:5001`).
+The server will start and communicate via STDIO (standard input/output).
 
 ## Using the MCP Server
 
-### Connecting from an MCP Client
-
-MCP clients can connect to this server using HTTP transport. The server exposes its capabilities through the MCP endpoints at the configured base URL.
+The server is designed to be used through MCP clients like Claude Desktop. Once configured (see Configuration section), you can ask Claude to retrieve your tasks.
 
 ### Available Tools
 
-#### SayHello
+#### GetTasks
 
-Greets a person by name.
+Retrieves Microsoft To-Do tasks grouped by day and project/list.
 
 **Parameters:**
-- `name` (string, required) - The name of the person to greet
+- `utcStart` (DateTime, required) - Start date in ISO 8601 format (e.g., 2025-10-29T00:00:00Z)
+- `utcEnd` (DateTime, required) - End date in ISO 8601 format (e.g., 2025-10-29T23:59:59Z)
 
-**Example Usage:**
-When called with the name "Alice", the tool returns: `"Hello, Alice! Welcome to the MCP server."`
+**Returns:**
+A JSON object containing tasks grouped by day, with each day containing projects and their associated tasks.
+
+#### SetAccessToken
+
+Sets the Microsoft Graph access token for authentication.
+
+**Parameters:**
+- `token` (string, required) - The Microsoft Graph access token
+
+**Note:** If you configure the access token via environment variable (recommended), you don't need to use this tool.
 
 ## Configuration for MCP Clients
 
@@ -61,78 +93,60 @@ When called with the name "Alice", the tool returns: `"Hello, Alice! Welcome to 
 
 Add the following to your Claude Desktop MCP configuration file:
 
-**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`  
 **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
-    "hello-world": {
+    "daily-scrum": {
+      "type": "stdio",
       "command": "dotnet",
-      "args": ["run", "--project", "C:/path/to/src/Mcp/Mcp.csproj"],
-      "env": {}
+      "args": ["run", "--project", "/absolute/path/to/daily-scrum/src/Mcp/Mcp.csproj"],
+      "env": {
+        "MSTODO__ACCESSTOKEN": "your-microsoft-graph-access-token-here"
+      }
     }
   }
 }
 ```
 
-Replace `C:/path/to/` with the actual path to your project (use forward slashes even on Windows).
+**Important:**
+- Replace `/absolute/path/to/daily-scrum/` with the actual absolute path to your project
+- Replace `your-microsoft-graph-access-token-here` with your Microsoft Graph access token
+- Use forward slashes (`/`) in the path, even on Windows
+- On Windows, the path might look like: `C:/Users/YourName/Code/daily-scrum/src/Mcp/Mcp.csproj`
+- On macOS/Linux: `/Users/YourName/Code/daily-scrum/src/Mcp/Mcp.csproj`
 
-### Using with HTTP Client
+After configuring, restart Claude Desktop for the changes to take effect.
 
-Since this is an HTTP-based MCP server, you can also configure clients to connect via HTTP:
+## Project Architecture
 
-```json
-{
-  "mcpServers": {
-    "hello-world-http": {
-      "url": "http://localhost:5000"
-    }
-  }
-}
-```
-
-Make sure the server is running before the client attempts to connect.
-
-## Development
-
-### Adding New Tools
-
-To add new tools to the MCP server:
-
-1. Create a static class and mark it with `[McpServerToolType]`
-2. Add static methods marked with `[McpServerTool]` and a `[Description]` attribute
-3. Use `[Description]` attributes on parameters to document them
-
-Example:
-
-```csharp
-[McpServerToolType]
-public static class MyTools
-{
-    [McpServerTool, Description("Adds two numbers together")]
-    public static int Add(
-        [Description("The first number")] int a,
-        [Description("The second number")] int b)
-    {
-        return a + b;
-    }
-}
-```
-
-The tool will be automatically discovered and registered when the server starts.
+This MCP server uses:
+- **STDIO Transport** - Communicates with MCP clients via standard input/output
+- **IOptions Pattern** - For configuration management (reading environment variables)
+- **Dependency Injection** - For service management
+- **Microsoft Graph SDK** - For accessing Microsoft To-Do API
+- **Strongly Typed Models** - For response data structures
 
 ### Project Structure
 
-- `Program.cs` - Main server configuration and tool definitions
-- `Mcp.csproj` - Project file with MCP dependencies
+- `Program.cs` - Main server configuration and dependency injection setup
+- `Features/Tasks/` - Task-related tools and models
+  - `GetTasksTool.cs` - Tool for retrieving tasks
+  - `GetTasksResponse.cs` - Response models
+  - `MsToDoOptions.cs` - Configuration options
+- `Features/Identity/` - Authentication-related tools
+  - `SetAccessTokenTool.cs` - Tool for setting access token
 - `appsettings.json` - Application configuration
 - `README.md` - This documentation
 
 ## Dependencies
 
-- `ModelContextProtocol.AspNetCore` (v0.4.0-preview.3) - MCP server framework for ASP.NET Core
-- `Microsoft.AspNetCore.OpenApi` (v9.0.10) - OpenAPI support
+- `ModelContextProtocol.AspNetCore` - MCP server framework for ASP.NET Core
+- `Microsoft.Graph` - Microsoft Graph SDK for API access
+- `Infrastructure` - Custom infrastructure layer with Graph service
+- `Domain` - Domain models and entities
 
 ## Building
 
@@ -146,11 +160,36 @@ dotnet build
 
 You can test the MCP server by:
 
-1. Running it with `dotnet run`
-2. Connecting with an MCP-compatible client (like Claude Desktop)
-3. Invoking the `SayHello` tool through the client
+1. Configuring it in Claude Desktop (see Configuration section above)
+2. Restarting Claude Desktop
+3. Asking Claude to retrieve your tasks
+
+### Example Queries
+
+After configuration, you can ask Claude:
+- "What tasks did I work on yesterday?"
+- "Show me my To-Do tasks from last week"
+- "What are my tasks for today?"
+
+Claude will use the GetTasks tool to retrieve your Microsoft To-Do tasks from the specified date range.
+
+## Troubleshooting
+
+### Access Token Issues
+
+If you receive an error about missing access token:
+1. Verify the environment variable `MSTODO__ACCESSTOKEN` is set correctly (note the double underscore)
+2. Check that your access token is still valid (they typically expire after 1 hour)
+3. Get a new token from [Microsoft Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer)
+
+### Connection Issues
+
+If Claude Desktop can't connect to the server:
+1. Verify the path to `Mcp.csproj` is correct and absolute
+2. Check that .NET 9.0 SDK is installed (`dotnet --version`)
+3. Look at Claude Desktop logs for error messages
+4. Try running `dotnet run --project /path/to/Mcp.csproj` manually to check for errors
 
 ## License
 
 See the LICENSE file in the root of the repository.
-
