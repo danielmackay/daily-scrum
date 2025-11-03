@@ -35,6 +35,8 @@ public class GraphService : IGraphService
         var lists = await _graphServiceClient.Me.Todo.Lists.GetAsync();
 
         //var tasks = new List<Task<TodoTaskCollectionResponse?>>();
+        if (lists?.Value is null)
+            return [];
 
         var tasks = new Dictionary<TodoTaskList, Task<TodoTaskCollectionResponse?>>();
 
@@ -46,7 +48,7 @@ public class GraphService : IGraphService
                 .GetAsync(cfg =>
                 {
                     cfg.QueryParameters.Filter =
-                        $"LastModifiedDateTime gt {utcStart.ToString("o")} and LastModifiedDateTime lt {utcEnd.ToString("o")}";
+                        $"LastModifiedDateTime gt {utcStart:o} and LastModifiedDateTime lt {utcEnd:o}";
                 });
 
             tasks.Add(list, task);
@@ -57,14 +59,17 @@ public class GraphService : IGraphService
         var todaysTasks = tasks
             .Select(kvp =>
             {
-                var title = kvp.Key.DisplayName;
+                var title = kvp.Key.DisplayName ?? "Unnamed List";
                 var isSystemList = kvp.Key.WellknownListName != WellknownListName.None;
-                var tasks = kvp.Value.Result.Value
+                var taskItems = kvp.Value.Result?.Value == null ?
+                    [] :
+                    kvp.Value.Result.Value
                     .GroupBy(t => t.Title)
                     .Select(g => g.First())
-                    .Select(t => new TaskItem(GetStatus(t.Status), t.Title))
+                    .Select(t => new TaskItem(GetStatus(t.Status), t.Title ?? "Untitled Task"))
                     .ToList();
-                return new Project(title, isSystemList, tasks);
+                return new Project(title, isSystemList, taskItems);
+
             })
             // .Where(t => t.LastModifiedDateTime?.DateTime.Date == DateTime.UtcNow.Date)
             .Where(p => p.Tasks.Count > 0)

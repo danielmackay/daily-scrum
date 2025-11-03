@@ -13,7 +13,7 @@ public class GraphServiceClientFactory
     // TODO: Read from config
     private readonly string _clientId = "2407f45c-4141-4484-8fc5-ce61327519d9";
     private readonly string _tenantId = "ac2f7c34-b935-48e9-abdc-11e5d4fcb2b0";
-    private readonly string _redirectUri = "http://localhost:5001"; // Must match redirect URI in app registration
+    // private readonly string _redirectUri = "http://localhost:5001"; // Must match redirect URI in app registration
     private readonly string[] _scopes = new[] { "User.Read" };
 
     public GraphServiceClientFactory(ICurrentUserService currentUserService, IServiceProvider serviceProvider)
