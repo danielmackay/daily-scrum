@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <OutputType>exe</OutputType>
+        <AssemblyVersion>1.0.0.1</AssemblyVersion>
     </PropertyGroup>
 
     <ItemGroup>
