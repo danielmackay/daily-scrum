@@ -1,6 +1,6 @@
-﻿using Infrastructure.Graph;
+﻿using Domain.Time;
+using Infrastructure.Graph;
 using WebUI.Common.Features;
-using WebUI.Common.Services;
 
 namespace WebUI.Features.DailyScrumEmail;
 

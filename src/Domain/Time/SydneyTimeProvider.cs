@@ -1,4 +1,4 @@
-namespace WebUI.Common.Services;
+namespace Domain.Time;
 
 public class SydneyTimeProvider : TimeProvider
 {

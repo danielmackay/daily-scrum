@@ -37,11 +37,11 @@ public class MockGraphService : IGraphService
         return Task.FromResult(99);
     }
 
-    public Task<List<TasksByDay>> GetTasksByDay(DateTime utcStart, DateTime utcEnd)
+    public Task<List<TasksByDay>> GetTasksByDay(DateTime utcStart, DateTime utcEnd, TimeProvider timeProvider)
     {
         var tasksByDay = new List<TasksByDay>
         {
-            new TasksByDay(utcStart.Date, new List<Project>
+            new TasksByDay(DateOnly.FromDateTime(utcStart.Date), new List<Project>
             {
                 new Project("Project 1", false, new List<TaskItem>
                 {
@@ -55,7 +55,7 @@ public class MockGraphService : IGraphService
                     new TaskItem(TaskStatus.InProgress, "Task E"),
                 }),
             }),
-            new TasksByDay(utcStart.Date.AddDays(1), new List<Project>
+            new TasksByDay(DateOnly.FromDateTime(utcStart.Date.AddDays(1)), new List<Project>
             {
                 new Project("Project 3", false, new List<TaskItem>
                 {

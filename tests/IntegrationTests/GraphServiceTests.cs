@@ -1,10 +1,10 @@
+using Domain.Time;
 using FluentAssertions;
 using Infrastructure.Graph;
 using Infrastructure.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebUI.Common.Services;
 
 namespace IntegrationTests;
 

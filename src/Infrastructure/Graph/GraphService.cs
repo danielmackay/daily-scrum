@@ -1,4 +1,5 @@
 using Domain;
+using Domain.Time;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Extensions.Logging;
@@ -9,7 +10,7 @@ namespace Infrastructure.Graph;
 public interface IGraphService
 {
     Task<List<Project>> GetTasks(DateTime utcStart, DateTime utcEnd);
-    Task<List<TasksByDay>> GetTasksByDay(DateTime utcStart, DateTime utcEnd);
+    Task<List<TasksByDay>> GetTasksByDay(DateTime utcStart, DateTime utcEnd, TimeProvider timeProvider);
     Task<int> GetInboxCount();
 }
 
@@ -72,11 +73,14 @@ public class GraphService : IGraphService
         return todaysTasks;
     }
 
-    public async Task<List<TasksByDay>> GetTasksByDay(DateTime utcStart, DateTime utcEnd)
+    public async Task<List<TasksByDay>> GetTasksByDay(DateTime utcStart, DateTime utcEnd, TimeProvider timeProvider)
     {
         _logger.LogInformation("Getting tasks grouped by day from {UtcStart} to {UtcEnd}", utcStart, utcEnd);
 
         var lists = await _graphServiceClient.Me.Todo.Lists.GetAsync();
+
+        if (lists?.Value is null)
+            return [];
 
         var tasks = new Dictionary<TodoTaskList, Task<TodoTaskCollectionResponse?>>();
 
@@ -88,7 +92,7 @@ public class GraphService : IGraphService
                 .GetAsync(cfg =>
                 {
                     cfg.QueryParameters.Filter =
-                        $"LastModifiedDateTime gt {utcStart.ToString("o")} and LastModifiedDateTime lt {utcEnd.ToString("o")}";
+                        $"LastModifiedDateTime gt {utcStart:o} and LastModifiedDateTime lt {utcEnd:o}";
                 });
 
             tasks.Add(list, task);
@@ -97,17 +101,21 @@ public class GraphService : IGraphService
         _ = await Task.WhenAll(tasks.Values);
 
         // Group all tasks by day
-        var tasksByDay = new Dictionary<DateTime, List<Project>>();
+        var tasksByDay = new Dictionary<DateOnly, List<Project>>();
 
         foreach (var kvp in tasks)
         {
-            var listName = kvp.Key.DisplayName;
+            var listName = kvp.Key.DisplayName ?? "Unnamed List";
             var isSystemList = kvp.Key.WellknownListName != WellknownListName.None;
-            var todoTasks = kvp.Value.Result.Value;
+            var todoTasks = kvp.Value.Result?.Value;
+
+            if (todoTasks is null)
+                continue;
 
             // Group tasks from this list by their last modified date
             var tasksGroupedByDay = todoTasks
-                .GroupBy(t => t.LastModifiedDateTime?.DateTime.Date ?? DateTime.UtcNow.Date)
+                .Where(t => t.LastModifiedDateTime.HasValue)
+                .GroupBy(t => timeProvider.GetLocalDate(t.LastModifiedDateTime!.Value))
                 .ToList();
 
             foreach (var dayGroup in tasksGroupedByDay)
@@ -117,7 +125,7 @@ public class GraphService : IGraphService
                 var taskItems = dayGroup
                     .GroupBy(t => t.Title)
                     .Select(g => g.First())
-                    .Select(t => new TaskItem(GetStatus(t.Status), t.Title))
+                    .Select(t => new TaskItem(GetStatus(t.Status), t.Title ?? "Untitled Task"))
                     .ToList();
 
                 if (taskItems.Count == 0)

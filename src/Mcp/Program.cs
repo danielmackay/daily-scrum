@@ -1,3 +1,4 @@
+using Domain.Time;
 using Infrastructure.Graph;
 using Infrastructure.Identity;
 using Mcp.Features.Tasks;
@@ -21,6 +22,8 @@ builder.Services.Configure<MsToDoOptions>(builder.Configuration.GetSection(MsToD
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<GraphServiceClientFactory>();
 builder.Services.AddScoped<IGraphService, GraphService>();
+builder.Services.AddScoped<TimeProvider, SydneyTimeProvider>();
+
 
 // Add MCP server services
 builder.Services

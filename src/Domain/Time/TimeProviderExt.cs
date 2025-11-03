@@ -1,4 +1,4 @@
-namespace WebUI.Common.Services;
+namespace Domain.Time;
 
 public static class TimeProviderExt
 {
@@ -6,6 +6,12 @@ public static class TimeProviderExt
     {
         var now = timeProvider.GetLocalNow();
         return DateOnly.FromDateTime(now.Date);
+    }
+
+    public static DateOnly GetLocalDate(this TimeProvider timeProvider, DateTimeOffset dateTimeOffset)
+    {
+        var localDateTime = TimeZoneInfo.ConvertTime(dateTimeOffset, timeProvider.LocalTimeZone);
+        return DateOnly.FromDateTime(localDateTime.DateTime);
     }
 
     public static DateTime GetStartOfDayUtc(this TimeProvider timeProvider, DateOnly date)

@@ -1,9 +1,9 @@
 ﻿using Domain;
+using Domain.Time;
 using ErrorOr;
 using Infrastructure.Graph;
 using Infrastructure.Identity;
 using MediatR;
-using WebUI.Common.Services;
 
 namespace WebUI.Features.DailyScrumEmail.UseCases.CreateDailyScrumCommand;
 

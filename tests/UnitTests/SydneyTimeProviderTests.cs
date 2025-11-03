@@ -1,5 +1,5 @@
+using Domain.Time;
 using FluentAssertions;
-using WebUI.Common.Services;
 
 namespace UnitTests;
 

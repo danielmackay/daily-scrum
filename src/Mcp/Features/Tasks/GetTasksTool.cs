@@ -1,3 +1,4 @@
+using Domain.Time;
 using ModelContextProtocol.Server;
 using System.ComponentModel;
 using System.Text.Json;
@@ -13,25 +14,28 @@ public class GetTasksTool
 {
     private readonly ICurrentUserService _currentUserService;
     private readonly GraphServiceClientFactory _graphServiceClientFactory;
+    private readonly TimeProvider _timeProvider;
     private readonly ILogger<GraphService> _logger;
     private readonly MsToDoOptions _options;
 
     public GetTasksTool(
         ICurrentUserService currentUserService, 
         GraphServiceClientFactory graphServiceClientFactory,
+        TimeProvider timeProvider,
         ILogger<GraphService> logger,
         IOptions<MsToDoOptions> options)
     {
         _currentUserService = currentUserService;
         _graphServiceClientFactory = graphServiceClientFactory;
+        _timeProvider = timeProvider;
         _logger = logger;
         _options = options.Value;
     }
 
     [McpServerTool, Description("Get the list of tasks grouped by day and project/list")]
     public async Task<string> GetTasks(
-        [Description("Start date in ISO 8601 format (e.g., 2025-10-29T00:00:00Z)")] DateTime utcStart,
-        [Description("End date in ISO 8601 format (e.g., 2025-10-29T23:59:59Z)")] DateTime utcEnd)
+        [Description("Local Start date in ISO 8601 format (e.g., 2025-10-29T00:00:00Z)")] DateTime localStart,
+        [Description("Local End date in ISO 8601 format (e.g., 2025-10-29T23:59:59Z)")] DateTime localEnd)
     {
         // Check if access token is set from environment variable
         var accessToken = !string.IsNullOrEmpty(_options.AccessToken) 
@@ -53,29 +57,10 @@ public class GetTasksTool
         // Create a new GraphService using the GraphServiceClientFactory
         var graphService = new GraphService(_logger, _graphServiceClientFactory);
 
-        var tasksByDay = await graphService.GetTasksByDay(utcStart, utcEnd);
+        var startOfDayUtc = _timeProvider.GetStartOfDayUtc(DateOnly.FromDateTime(localStart));
+        var endOfDayUtc = _timeProvider.GetEndOfDayUtc(DateOnly.FromDateTime(localEnd));
 
-        // var result = new GetTasksResponse
-        // {
-        //     StartDate = utcStart,
-        //     EndDate = utcEnd,
-        //     TasksByDay = tasksByDay.Select(tbd => new Mcp.Features.Tasks.TasksByDay
-        //     {
-        //         Date = tbd.Date,
-        //         Projects = tbd.Projects.Select(p => new ProjectTasks
-        //         {
-        //             Name = p.Name,
-        //             IsSystemProject = p.IsSystemProject,
-        //             Tasks = p.Tasks.Select(t => new TaskDetails
-        //             {
-        //                 Id = t.Id,
-        //                 Name = t.Name,
-        //                 DisplayName = t.DisplayName,
-        //                 Status = t.Status.ToString()
-        //             }).ToList()
-        //         }).ToList()
-        //     }).ToList()
-        // };
+        var tasksByDay = await graphService.GetTasksByDay(startOfDayUtc, endOfDayUtc, _timeProvider);
 
         return JsonSerializer.Serialize(tasksByDay, new JsonSerializerOptions { WriteIndented = true });
     }

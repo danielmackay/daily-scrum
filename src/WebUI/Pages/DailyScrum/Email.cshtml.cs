@@ -25,10 +25,12 @@ public class Email : PageModel
         ViewModel = result.Value;
     }
 
-    public async Task OnPost()
+    public Task OnPost()
     {
         // TODO: Send email
 
         // TODO: Redirect to success page
+
+        return Task.CompletedTask;
     }
 }
