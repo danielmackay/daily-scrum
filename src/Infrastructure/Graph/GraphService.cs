@@ -22,10 +22,23 @@ public class GraphService : IGraphService
     public GraphService(
         ILogger<GraphService> logger,
         GraphServiceClientFactory factory)
+        : this(logger, factory.CreateWithAccessToken())
+    {
+    }
+
+    // Private so the DI container only ever sees the single public (factory-based)
+    // constructor — adding a second public 2-arg ctor would make WebUI's container
+    // resolution ambiguous, since AddMicrosoftGraph also registers a GraphServiceClient.
+    private GraphService(ILogger<GraphService> logger, GraphServiceClient graphServiceClient)
     {
         _logger = logger;
-        _graphServiceClient = factory.CreateWithAccessToken();
+        _graphServiceClient = graphServiceClient;
     }
+
+    // Entry point for the MCP server: supply a client built from the shared,
+    // silently-refreshed token cache (GraphServiceClientFactory.CreateWithCachedCredential).
+    public static GraphService FromClient(ILogger<GraphService> logger, GraphServiceClient client)
+        => new(logger, client);
 
     public async Task<List<Project>> GetTasks(DateTime utcStart, DateTime utcEnd)
     {

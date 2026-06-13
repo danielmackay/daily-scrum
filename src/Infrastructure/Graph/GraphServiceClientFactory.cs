@@ -2,6 +2,7 @@ using Azure.Identity;
 using Infrastructure.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph;
+using Microsoft.Kiota.Authentication.Azure;
 
 namespace Infrastructure.Graph;
 
@@ -33,6 +34,38 @@ public class GraphServiceClientFactory
         ArgumentException.ThrowIfNullOrEmpty(accessToken);
         var credential = new JwtTokenCredential(accessToken);
         return new GraphServiceClient(credential);
+    }
+
+    /// <summary>
+    /// Builds a Graph client backed by the shared, persistent MSAL token cache
+    /// (seeded by the <c>daily-scrum login</c> CLI). Acquires tokens silently and
+    /// never prompts; throws <see cref="Azure.Identity.AuthenticationRequiredException"/>
+    /// when the user needs to log in again.
+    /// </summary>
+    /// <summary>
+    /// Builds a Graph client backed by the shared, persistent MSAL token cache
+    /// (seeded by the <c>daily-scrum login</c> CLI). Acquires tokens silently and
+    /// never prompts; throws <see cref="Azure.Identity.AuthenticationRequiredException"/>
+    /// when the user needs to log in again.
+    /// CAE is disabled (see below) so silent acquisition stays deterministic.
+    /// </summary>
+    public GraphServiceClient CreateWithCachedCredential()
+    {
+        // The Graph SDK enables CAE (Continuous Access Evaluation) by default, which forces
+        // a CAE-capable token request. Our shared cache is seeded by a non-CAE interactive
+        // login, and the silent credential has DisableAutomaticAuthentication = true — so a
+        // CAE request makes MSAL demand interactive sign-in and throw
+        // AuthenticationRequiredException instead of refreshing silently. This server is
+        // silent-only and cannot service CAE claims challenges, so we disable CAE to keep
+        // token requests aligned with the cached (non-CAE) token.
+        var authProvider = new AzureIdentityAuthenticationProvider(
+            GraphAuthenticator.CreateSilentCredential(),
+            allowedHosts: null,
+            observabilityOptions: null,
+            isCaeEnabled: false,
+            scopes: GraphAuthenticator.Scopes);
+
+        return new GraphServiceClient(authProvider);
     }
 
     public GraphServiceClient CreateWithDeviceCodeFlow()

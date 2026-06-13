@@ -1,7 +1,6 @@
 using Domain.Time;
 using Infrastructure.Graph;
 using Infrastructure.Identity;
-using Mcp.Features.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -14,9 +13,6 @@ builder.Logging.AddConsole(consoleLogOptions =>
     // Configure all logs to go to stderr
     consoleLogOptions.LogToStandardErrorThreshold = LogLevel.Trace;
 });
-
-// Configure options
-builder.Services.Configure<MsToDoOptions>(builder.Configuration.GetSection(MsToDoOptions.SectionName));
 
 // Add services
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();

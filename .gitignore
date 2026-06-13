@@ -479,3 +479,6 @@ $RECYCLE.BIN/
 .idea/
 
 .env
+
+# Serena MCP project cache
+.serena/

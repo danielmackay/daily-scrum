@@ -6,6 +6,7 @@
     <File Path="docker-compose.yml" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src\Cli\DailyScrum.Cli.csproj" Type="Classic C#" />
     <Project Path="src\Domain\Domain.csproj" Type="Classic C#" />
     <Project Path="src\Infrastructure\Infrastructure.csproj" Type="Classic C#" />
     <Project Path="src\Mcp\Mcp.csproj" Type="Classic C#" />
